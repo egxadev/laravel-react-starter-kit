@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import type { Config } from 'ziggy-js';
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     auth: {
@@ -32,6 +33,7 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    ziggy: Config & { location: string };
     [key: string]: unknown;
 }
 
