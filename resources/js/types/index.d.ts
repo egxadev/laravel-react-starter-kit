@@ -1,12 +1,13 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
+import { User } from './user';
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> extends T {
     auth: {
         user: User;
         permissions: string[];
     };
-};
+}
 
 export interface Auth {
     user: User;
@@ -27,6 +28,7 @@ export interface NavItem {
     url: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    permission?: string[];
 }
 
 export interface SharedData {
@@ -35,15 +37,4 @@ export interface SharedData {
     auth: Auth;
     ziggy: Config & { location: string };
     [key: string]: unknown;
-}
-
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
 }

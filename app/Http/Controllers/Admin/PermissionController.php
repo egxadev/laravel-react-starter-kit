@@ -13,12 +13,18 @@ class PermissionController extends Controller
      */
     public function __invoke(Request $request)
     {
-        //get permissions
+        $breadcrumbs = [
+            [
+                'title' => 'Permission',
+                'href' => '/permissions'
+            ]
+        ];
+
         $permissions = Permission::all();
 
-        //return inertia view
-        return inertia('dashboard', [
-            'permissions' => $permissions
+        return inertia('permissions/index', [
+            'breadcrumbs' => $breadcrumbs,
+            'permissions' => $permissions,
         ]);
     }
 }

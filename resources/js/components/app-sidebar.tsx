@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileSliders, Folder, KeyRound, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, KeyRound, LayoutGrid, UserRoundCog, UsersRound } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -12,16 +12,25 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         url: '/dashboard',
         icon: LayoutGrid,
+        permission: ['dashboard.index'],
     },
     {
         title: 'Permission',
         url: '/permissions',
-        icon: FileSliders,
+        icon: KeyRound,
+        permission: ['permissions.index'],
     },
     {
         title: 'Role',
         url: '/roles',
-        icon: KeyRound,
+        icon: UserRoundCog,
+        permission: ['roles.index'],
+    },
+    {
+        title: 'Customers',
+        url: '/customers',
+        icon: UsersRound,
+        permission: ['customers.index'],
     },
 ];
 
