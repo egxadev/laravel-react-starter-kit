@@ -18,7 +18,7 @@ export default function Dashboard() {
             <Head title="Dashboard" />
 
             <div className="px-4 py-6">
-                <div className="overflow-hidden bg-zinc-50 sm:rounded-lg">
+                <div className="overflow-hidden bg-muted sm:rounded-lg">
                     <div className="p-6 text-gray-900">Welcome, {user.name}. You're logged in!</div>
                 </div>
             </div>
