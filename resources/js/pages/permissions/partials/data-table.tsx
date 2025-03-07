@@ -1,17 +1,9 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Permission } from '@/types/permission';
 
 export const columns: ColumnDef<Permission>[] = [
@@ -25,28 +17,5 @@ export const columns: ColumnDef<Permission>[] = [
                 </Button>
             );
         },
-    },
-    {
-        id: 'actions',
-        cell: ({ row }) => {
-            const data = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(data.id.toString())}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(data.id.toString())}>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
-    },
+    }
 ];

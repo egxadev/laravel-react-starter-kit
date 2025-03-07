@@ -14,11 +14,17 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //get roles
+        $breadcrumbs = [
+            [
+                'title' => 'Role',
+                'href' => '/roles'
+            ]
+        ];
+
         $roles = Role::all();
 
-        //render with inertia
-        return inertia('dashboard', [
+        return inertia('roles/index', [
+            'breadcrumbs' => $breadcrumbs,
             'roles' => $roles,
         ]);
     }
@@ -28,11 +34,21 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //get permission all
+        $breadcrumbs = [
+            [
+                'title' => 'Role',
+                'href' => '/roles'
+            ],
+            [
+                'title' => 'Create',
+                'href' => '/roles/create'
+            ]
+        ];
+
         $permissions = Permission::all();
 
-        //render with inertia
-        return inertia('dashboard', [
+        return inertia('roles/create', [
+            'breadcrumbs' => $breadcrumbs,
             'permissions' => $permissions,
         ]);
     }
@@ -65,14 +81,23 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //get role
+        $breadcrumbs = [
+            [
+                'title' => 'Role',
+                'href' => '/roles'
+            ],
+            [
+                'title' => 'Create',
+                'href' => '/roles/' . $id . '/edit'
+            ]
+        ];
+
         $role = Role::with('permissions')->findOrFail($id);
 
-        //get permission all
         $permissions = Permission::all();
 
-        //render with inertia
-        return inertia('dashboard', [
+        return inertia('roles/edit', [
+            'breadcrumbs' => $breadcrumbs,
             'role'          => $role,
             'permissions'   => $permissions,
         ]);
@@ -83,21 +108,15 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        /**
-         * validate request
-         */
         $request->validate([
             'name'          => 'required|unique:roles,name,' . $role->id,
             'permissions'   => 'required',
         ]);
 
-        //update role
         $role->update(['name' => $request->name]);
 
-        //sync permissions
         $role->syncPermissions($request->permissions);
 
-        //redirect
         return redirect()->route('roles.index');
     }
 
@@ -106,13 +125,10 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //find role by ID
         $role = Role::findOrFail($id);
 
-        //delete role
         $role->delete();
 
-        //redirect
         return redirect()->route('roles.index');
     }
 }
