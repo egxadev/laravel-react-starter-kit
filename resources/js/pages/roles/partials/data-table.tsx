@@ -1,15 +1,3 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,23 +8,29 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import hasAnyPermission from '@/lib/utils';
 import { Permission } from '@/types/permission';
 import { Link, router } from '@inertiajs/react';
-import hasAnyPermission from '@/lib/utils';
+import { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const columns: ColumnDef<Permission>[] = [
     {
-        accessorKey: "name",
+        accessorKey: 'name',
         header: ({ column }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() =>
-                        column.toggleSorting(column.getIsSorted() === "asc")
-                    }
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
@@ -44,14 +38,14 @@ export const columns: ColumnDef<Permission>[] = [
         },
     },
     {
-        id: "actions",
+        id: 'actions',
         cell: ({ row }) => {
             const data = row.original;
 
             function handleDelete() {
                 router.delete(`roles/${data.id}`, {
                     onSuccess: () => {
-                        toast("Success", { description: "Role deleted successfully." })
+                        toast.success('Role deleted successfully.');
                     },
                 });
             }
@@ -68,37 +62,27 @@ export const columns: ColumnDef<Permission>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
 
-                        {hasAnyPermission(["roles.edit"]) && (
-                            <Link href={route("roles.edit", data.id)}>
+                        {hasAnyPermission(['roles.edit']) && (
+                            <Link href={route('roles.edit', data.id)}>
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                             </Link>
                         )}
 
-                        {hasAnyPermission(["roles.delete"]) && (
+                        {hasAnyPermission(['roles.delete']) && (
                             <AlertDialog>
-                                <AlertDialogTrigger className="text-sm px-2">
+                                <AlertDialogTrigger className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">
                                     Delete
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                            Are you absolutely sure?
-                                        </AlertDialogTitle>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. This
-                                            will permanently delete the role and
-                                            remove your data from our servers.
+                                            This action cannot be undone. This will permanently delete your data from our servers.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>
-                                            Cancel
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={() => handleDelete()}
-                                        >
-                                            Continue
-                                        </AlertDialogAction>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => handleDelete()}>Continue</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>

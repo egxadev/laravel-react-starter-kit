@@ -87,7 +87,7 @@ class RoleController extends Controller
                 'href' => '/roles'
             ],
             [
-                'title' => 'Create',
+                'title' => 'Edit',
                 'href' => '/roles/' . $id . '/edit'
             ]
         ];

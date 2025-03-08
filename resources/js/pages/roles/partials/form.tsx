@@ -1,43 +1,32 @@
-import { Permission } from "@/types/permission";
-import { Role } from "@/types/role";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { router, usePage } from "@inertiajs/react";
-import { PageProps } from "@/types";
-import { User } from "@/types/user";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PageProps } from '@/types';
+import { Permission } from '@/types/permission';
+import { Role } from '@/types/role';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { router, usePage } from '@inertiajs/react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 const formSchema = z.object({
     name: z.string().min(2, {
-        message: "Role name must be at least 2 characters.",
+        message: 'Role name must be at least 2 characters.',
     }),
     permissions: z.array(z.number()),
 });
 
 export function RoleForm({
-    auth,
     role,
     permissions,
     mode,
     className,
 }: PageProps<{
-    auth: { user: User; permissions: string[] };
     role?: Role;
     permissions: Permission[];
-    mode: "create" | "edit";
+    mode: 'create' | 'edit';
     className: string;
 }>) {
     const { errors } = usePage().props;
@@ -46,31 +35,29 @@ export function RoleForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: role?.name,
-            permissions: (role?.permissions ?? []).map(
-                (permission) => permission.id
-            ),
+            permissions: (role?.permissions ?? []).map((permission) => permission.id),
         },
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        const isCreateMode = mode === "create";
-        const url = isCreateMode ? "/roles" : `/roles/${role?.id}`;
-        const message = isCreateMode
-            ? "Create role successfully"
-            : "Update role successfully";
+        const isCreateMode = mode === 'create';
+        const url = isCreateMode ? '/roles' : `/roles/${role?.id}`;
+        const message = isCreateMode ? 'Role created successfully.' : 'Role updated successfully.';
 
         if (isCreateMode) {
             router.post(url, values, {
                 onSuccess: () => {
-                    console.log(message);
-                    toast.success(message);
+                    setTimeout(() => {
+                        toast.success(message);
+                    }, 500);
                 },
             });
         } else {
             router.put(url, values, {
                 onSuccess: () => {
-                    console.log(message);
-                    toast.success(message);
+                    setTimeout(() => {
+                        toast.success(message);
+                    }, 500);
                 },
             });
         }
@@ -99,13 +86,8 @@ export function RoleForm({
                     render={() => (
                         <FormItem>
                             <div className="mb-4">
-                                <FormLabel className="text-base">
-                                    Role
-                                </FormLabel>
-                                <FormDescription>
-                                    Select the role items you want to display in
-                                    the sidebar.
-                                </FormDescription>
+                                <FormLabel className="text-base">Role</FormLabel>
+                                <FormDescription>Select the role items you want to display in the sidebar.</FormDescription>
                             </div>
                             {permissions.map((permission) => (
                                 <FormField
@@ -114,40 +96,18 @@ export function RoleForm({
                                     name="permissions"
                                     render={({ field }) => {
                                         return (
-                                            <FormItem
-                                                key={permission.id}
-                                                className="flex flex-row items-start space-x-3 space-y-0"
-                                            >
+                                            <FormItem key={permission.id} className="flex flex-row items-start space-y-0 space-x-3">
                                                 <FormControl>
                                                     <Checkbox
-                                                        checked={field.value?.includes(
-                                                            permission.id
-                                                        )}
-                                                        onCheckedChange={(
-                                                            checked
-                                                        ) => {
+                                                        checked={field.value?.includes(permission.id)}
+                                                        onCheckedChange={(checked) => {
                                                             return checked
-                                                                ? field.onChange(
-                                                                      [
-                                                                          ...field.value,
-                                                                          permission.id,
-                                                                      ]
-                                                                  )
-                                                                : field.onChange(
-                                                                      field.value?.filter(
-                                                                          (
-                                                                              value
-                                                                          ) =>
-                                                                              value !==
-                                                                              permission.id
-                                                                      )
-                                                                  );
+                                                                ? field.onChange([...field.value, permission.id])
+                                                                : field.onChange(field.value?.filter((value) => value !== permission.id));
                                                         }}
                                                     />
                                                 </FormControl>
-                                                <FormLabel className="text-sm font-normal">
-                                                    {permission.name}
-                                                </FormLabel>
+                                                <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
                                             </FormItem>
                                         );
                                     }}

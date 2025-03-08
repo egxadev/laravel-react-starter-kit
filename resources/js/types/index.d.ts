@@ -3,7 +3,7 @@ import type { Config } from 'ziggy-js';
 import { User } from './user';
 
 export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> extends T {
-    auth: {
+    auth?: {
         user: User;
         permissions: string[];
     };

@@ -1,25 +1,22 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { PageProps, type BreadcrumbItem } from '@/types';
+import { BreadcrumbItem } from '@/types';
+import { User } from '@/types/user';
 import { Head, usePage } from '@inertiajs/react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
-
-export default function Dashboard() {
-    const user = usePage<PageProps>().props.auth.user;
+export default function DashboardIndex() {
+    const { auth, breadcrumbs } = usePage<{
+        auth: { user: User; permissions: string[] };
+        breadcrumbs: BreadcrumbItem[];
+    }>().props;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title={breadcrumbs[0].title} />
 
             <div className="px-4 py-6">
-                <div className="overflow-hidden bg-muted sm:rounded-lg">
-                    <div className="p-6 text-gray-900">Welcome, {user.name}. You're logged in!</div>
+                <div className="bg-muted overflow-hidden sm:rounded-lg">
+                    <div className="p-6 text-gray-900 dark:text-neutral-200">Welcome, {auth.user.name}. You're logged in!</div>
                 </div>
             </div>
 
