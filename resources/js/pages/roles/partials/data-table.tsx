@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,6 +23,7 @@ import { Role } from '@/types/role';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export const columns: ColumnDef<Role>[] = [

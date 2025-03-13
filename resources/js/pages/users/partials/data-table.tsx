@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,10 +19,11 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import hasAnyPermission from '@/lib/utils';
-import { Link, router } from '@inertiajs/react';
 import { User } from '@/types/user';
+import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export const columns: ColumnDef<User>[] = [

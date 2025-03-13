@@ -85,31 +85,28 @@ export function RoleForm({
                     name="permissions"
                     render={({ field }) => (
                         <FormItem>
-                        <div className="mb-4">
-                            <FormLabel className="text-base">Permission</FormLabel>
-                            <FormDescription>Select permissions for this role.</FormDescription>
-                        </div>
-                        {permissions.map((permission) => (
-                            <FormItem
-                            key={permission.id}
-                            className="flex flex-row items-start space-y-0 space-x-3"
-                            >
-                            <FormControl>
-                                <Checkbox
-                                checked={field.value?.includes(permission.id)}
-                                onCheckedChange={(checked) => {
-                                    field.onChange(
-                                    checked
-                                        ? [...field.value, permission.id]
-                                        : field.value?.filter((value) => value !== permission.id)
-                                    );
-                                }}
-                                />
-                            </FormControl>
-                            <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
-                            </FormItem>
-                        ))}
-                        <FormMessage>{errors.permissions}</FormMessage>
+                            <div className="mb-4">
+                                <FormLabel className="text-base">Permission</FormLabel>
+                                <FormDescription>Select permissions for this role.</FormDescription>
+                            </div>
+                            {permissions.map((permission) => (
+                                <FormItem key={permission.id} className="flex flex-row items-start space-y-0 space-x-3">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value?.includes(permission.id)}
+                                            onCheckedChange={(checked) => {
+                                                field.onChange(
+                                                    checked
+                                                        ? [...field.value, permission.id]
+                                                        : field.value?.filter((value) => value !== permission.id),
+                                                );
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
+                                </FormItem>
+                            ))}
+                            <FormMessage>{errors.permissions}</FormMessage>
                         </FormItem>
                     )}
                 />

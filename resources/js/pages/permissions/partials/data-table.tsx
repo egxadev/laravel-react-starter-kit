@@ -17,5 +17,5 @@ export const columns: ColumnDef<Permission>[] = [
                 </Button>
             );
         },
-    }
+    },
 ];

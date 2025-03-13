@@ -11,16 +11,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-const formSchema = z.object({
-    name: z.string().min(2, { message: 'Role name must be at least 2 characters.' }),
-    email: z.string().email({ message: 'Invalid email address.' }),
-    roles: z.array(z.number()),
-    password: z.string().min(8, { message: 'Password must be at least 8 characters.' }).optional(),
-    password_confirmation: z.string().min(8, { message: 'Confirm Password must be at least 8 characters.' }).optional(),
-}).refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
-    path: ["password_confirmation"],
-});
+const formSchema = z
+    .object({
+        name: z.string().min(2, { message: 'Role name must be at least 2 characters.' }),
+        email: z.string().email({ message: 'Invalid email address.' }),
+        roles: z.array(z.number()),
+        password: z.string().min(8, { message: 'Password must be at least 8 characters.' }).optional(),
+        password_confirmation: z.string().min(8, { message: 'Confirm Password must be at least 8 characters.' }).optional(),
+    })
+    .refine((data) => data.password === data.password_confirmation, {
+        message: "Passwords don't match",
+        path: ['password_confirmation'],
+    });
 
 export function UserForm({
     mode,
@@ -48,7 +50,7 @@ export function UserForm({
         const isCreateMode = mode === 'create';
         const url = isCreateMode ? '/users' : `/users/${user?.id}`;
         const message = isCreateMode ? 'User created successfully.' : 'User updated successfully.';
-        
+
         if (isCreateMode) {
             router.post(url, values, {
                 onSuccess: () => {
@@ -100,38 +102,33 @@ export function UserForm({
                 />
 
                 <FormField
-                control={form.control}
-                name="roles"
-                render={({ field }) => (
-                    <FormItem>
-                        <div className="mb-4">
-                            <FormLabel className="text-base">Role</FormLabel>
-                            <FormDescription>Select roles for this user.</FormDescription>
-                        </div>
-                        {roles.map((role) => (
-                            <FormItem
-                            key={role.id}
-                            className="flex flex-row items-start space-y-0 space-x-3"
-                            >
-                                <FormControl>
-                                    <Checkbox
-                                    checked={(field.value ?? []).includes(role.id)}
-                                    onCheckedChange={(checked) => {
-                                        const currentValues = Array.isArray(field.value) ? field.value : [];
-                                        field.onChange(
-                                        checked
-                                            ? [...currentValues, role.id]
-                                            : currentValues.filter((value) => value !== role.id)
-                                        );
-                                    }}
-                                    />
-                                </FormControl>
-                                <FormLabel className="text-sm font-normal">{role.name}</FormLabel>
-                            </FormItem>
-                        ))}
-                        <FormMessage>{errors.roles}</FormMessage>
-                    </FormItem>
-                )}
+                    control={form.control}
+                    name="roles"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="mb-4">
+                                <FormLabel className="text-base">Role</FormLabel>
+                                <FormDescription>Select roles for this user.</FormDescription>
+                            </div>
+                            {roles.map((role) => (
+                                <FormItem key={role.id} className="flex flex-row items-start space-y-0 space-x-3">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={(field.value ?? []).includes(role.id)}
+                                            onCheckedChange={(checked) => {
+                                                const currentValues = Array.isArray(field.value) ? field.value : [];
+                                                field.onChange(
+                                                    checked ? [...currentValues, role.id] : currentValues.filter((value) => value !== role.id),
+                                                );
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal">{role.name}</FormLabel>
+                                </FormItem>
+                            ))}
+                            <FormMessage>{errors.roles}</FormMessage>
+                        </FormItem>
+                    )}
                 />
 
                 <FormField
@@ -147,7 +144,7 @@ export function UserForm({
                         </FormItem>
                     )}
                 />
-                
+
                 <FormField
                     control={form.control}
                     name="password_confirmation"
