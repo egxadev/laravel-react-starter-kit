@@ -21,7 +21,7 @@ class RoleRequest extends FormRequest
         }
     
         if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $role = $this->route('role')->id;
+            $role = $this->route('role');
 
             return [
                 'name'          => 'required|unique:roles,name,' . $role->id,
