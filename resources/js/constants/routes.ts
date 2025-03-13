@@ -4,25 +4,25 @@ import { BookOpen, Folder, KeyRound, LayoutGrid, UserRoundCog, UsersRound } from
 export const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        url: '/dashboard',
+        href: '/dashboard',
         icon: LayoutGrid,
         permission: ['dashboard.index'],
     },
     {
         title: 'Permission',
-        url: '/permissions',
+        href: '/permissions',
         icon: KeyRound,
         permission: ['permissions.index'],
     },
     {
         title: 'Role',
-        url: '/roles',
+        href: '/roles',
         icon: UserRoundCog,
         permission: ['roles.index'],
     },
     {
         title: 'Customers',
-        url: '/customers',
+        href: '/customers',
         icon: UsersRound,
         permission: ['customers.index'],
     },
@@ -31,12 +31,12 @@ export const mainNavItems: NavItem[] = [
 export const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
+        href: 'https://github.com/laravel/react-starter-kit',
         icon: Folder,
     },
     {
         title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
+        href: 'https://laravel.com/docs/starter-kits',
         icon: BookOpen,
     },
 ];
@@ -44,17 +44,17 @@ export const footerNavItems: NavItem[] = [
 export const settingsNavItems: NavItem[] = [
     {
         title: 'Profile',
-        url: '/settings/profile',
+        href: '/settings/profile',
         icon: null,
     },
     {
         title: 'Password',
-        url: '/settings/password',
+        href: '/settings/password',
         icon: null,
     },
     {
         title: 'Appearance',
-        url: '/settings/appearance',
+        href: '/settings/appearance',
         icon: null,
     },
 ];
