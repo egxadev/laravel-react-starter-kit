@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -42,54 +43,61 @@ export const columns: ColumnDef<Permission>[] = [
         cell: ({ row }) => {
             const data = row.original;
 
-            function handleDelete() {
-                router.delete(`roles/${data.id}`, {
-                    onSuccess: () => {
-                        toast.success('Role deleted successfully.');
-                    },
-                });
-            }
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-
-                        {hasAnyPermission(['roles.edit']) && (
-                            <Link href={route('roles.edit', data.id)}>
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                            </Link>
-                        )}
-
-                        {hasAnyPermission(['roles.delete']) && (
-                            <AlertDialog>
-                                <AlertDialogTrigger className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                    Delete
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete your data from our servers.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => handleDelete()}>Continue</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        )}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
+            return <ActionCell data={data} />;
         },
     },
 ];
+
+const ActionCell = ({ data }: { data: Permission }) => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    function handleDelete() {
+        router.delete(`roles/${data.id}`, {
+            onSuccess: () => {
+                toast.success('Role deleted successfully.');
+                setIsDropdownOpen(false);
+            },
+        });
+    }
+
+    return (
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                {hasAnyPermission(['roles.edit']) && (
+                    <Link href={route('roles.edit', data.id)}>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                    </Link>
+                )}
+
+                {hasAnyPermission(['roles.delete']) && (
+                    <AlertDialog>
+                        <AlertDialogTrigger className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                            Delete
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete your data from our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete()}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+};
