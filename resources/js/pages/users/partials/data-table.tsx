@@ -20,13 +20,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import hasAnyPermission from '@/lib/utils';
-import { Role } from '@/types/role';
 import { Link, router } from '@inertiajs/react';
+import { User } from '@/types/user';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const columns: ColumnDef<Role>[] = [
+export const columns: ColumnDef<User>[] = [
     {
         accessorKey: 'name',
         header: ({ column }) => {
@@ -39,6 +39,18 @@ export const columns: ColumnDef<Role>[] = [
         },
     },
     {
+        accessorKey: 'email',
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    Email
+                    <ArrowUpDown />
+                </Button>
+            );
+        },
+        cell: ({ row }) => <div>{row.getValue('email')}</div>,
+    },
+    {
         id: 'actions',
         cell: ({ row }) => {
             const data = row.original;
@@ -48,13 +60,13 @@ export const columns: ColumnDef<Role>[] = [
     },
 ];
 
-const ActionCell = ({ data }: { data: Role }) => {
+const ActionCell = ({ data }: { data: User }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     function handleDelete() {
-        router.delete(`roles/${data.id}`, {
+        router.delete(`users/${data.id}`, {
             onSuccess: () => {
-                toast.success('Role deleted successfully.');
+                toast.success('User deleted successfully.');
                 setIsDropdownOpen(false);
             },
         });
@@ -72,13 +84,13 @@ const ActionCell = ({ data }: { data: Role }) => {
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                {hasAnyPermission(['roles.edit']) && (
-                    <Link href={route('roles.edit', data.id)}>
+                {hasAnyPermission(['users.edit']) && (
+                    <Link href={route('users.edit', data.id)}>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                     </Link>
                 )}
 
-                {hasAnyPermission(['roles.delete']) && (
+                {hasAnyPermission(['users.delete']) && (
                     <AlertDialog>
                         <AlertDialogTrigger className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">
                             Delete

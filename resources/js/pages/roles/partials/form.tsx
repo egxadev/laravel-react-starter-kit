@@ -19,14 +19,14 @@ const formSchema = z.object({
 });
 
 export function RoleForm({
+    mode,
     role,
     permissions,
-    mode,
     className,
 }: PageProps<{
+    mode: 'create' | 'edit';
     role?: Role;
     permissions: Permission[];
-    mode: 'create' | 'edit';
     className: string;
 }>) {
     const { errors } = usePage().props;
@@ -83,40 +83,37 @@ export function RoleForm({
                 <FormField
                     control={form.control}
                     name="permissions"
-                    render={() => (
+                    render={({ field }) => (
                         <FormItem>
-                            <div className="mb-4">
-                                <FormLabel className="text-base">Role</FormLabel>
-                                <FormDescription>Select the role items you want to display in the sidebar.</FormDescription>
-                            </div>
-                            {permissions.map((permission) => (
-                                <FormField
-                                    key={permission.id}
-                                    control={form.control}
-                                    name="permissions"
-                                    render={({ field }) => {
-                                        return (
-                                            <FormItem key={permission.id} className="flex flex-row items-start space-y-0 space-x-3">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value?.includes(permission.id)}
-                                                        onCheckedChange={(checked) => {
-                                                            return checked
-                                                                ? field.onChange([...field.value, permission.id])
-                                                                : field.onChange(field.value?.filter((value) => value !== permission.id));
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                                <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
-                                            </FormItem>
-                                        );
-                                    }}
+                        <div className="mb-4">
+                            <FormLabel className="text-base">Permission</FormLabel>
+                            <FormDescription>Select permissions for this role.</FormDescription>
+                        </div>
+                        {permissions.map((permission) => (
+                            <FormItem
+                            key={permission.id}
+                            className="flex flex-row items-start space-y-0 space-x-3"
+                            >
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value?.includes(permission.id)}
+                                onCheckedChange={(checked) => {
+                                    field.onChange(
+                                    checked
+                                        ? [...field.value, permission.id]
+                                        : field.value?.filter((value) => value !== permission.id)
+                                    );
+                                }}
                                 />
-                            ))}
-                            <FormMessage>{errors.permissions}</FormMessage>
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
+                            </FormItem>
+                        ))}
+                        <FormMessage>{errors.permissions}</FormMessage>
                         </FormItem>
                     )}
                 />
+
                 <Button type="submit">Submit</Button>
             </form>
         </Form>

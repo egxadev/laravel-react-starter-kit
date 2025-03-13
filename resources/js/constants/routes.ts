@@ -21,10 +21,10 @@ export const mainNavItems: NavItem[] = [
         permission: ['roles.index'],
     },
     {
-        title: 'Customers',
-        href: '/customers',
+        title: 'User',
+        href: '/users',
         icon: UsersRound,
-        permission: ['customers.index'],
+        permission: ['users.index'],
     },
 ];
 

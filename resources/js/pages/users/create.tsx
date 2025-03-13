@@ -1,18 +1,15 @@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem, PageProps } from '@/types';
-import { Permission } from '@/types/permission';
 import { Role } from '@/types/role';
 import { Head } from '@inertiajs/react';
-import { RoleForm } from './partials/form';
+import { UserForm } from './partials/form';
 
-export default function RoleEdit({
+export default function UserCreate({
     breadcrumbs,
-    role,
-    permissions,
+    roles,
 }: PageProps<{
     breadcrumbs: BreadcrumbItem[];
-    role: Role;
-    permissions: Permission[];
+    roles: Role[];
 }>) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -21,7 +18,7 @@ export default function RoleEdit({
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="p-4 shadow sm:rounded-lg sm:p-8">
-                        <RoleForm mode="edit" role={role} permissions={permissions} className="max-w-xl" />
+                        <UserForm mode="create" roles={roles} className="max-w-xl" />
                     </div>
                 </div>
             </div>
