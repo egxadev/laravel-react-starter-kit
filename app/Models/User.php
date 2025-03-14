@@ -68,4 +68,13 @@ class User extends Authenticatable
             return [$pr['name'] => true];
         });
     }
+    /**
+     * Returns a collection of {@see \App\Models\SocialAccount} that the user has.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\SocialAccount>
+     */
+    public function socialAccounts()
+    {
+    return $this->hasMany(SocialAccount::class);
+    }
 }
