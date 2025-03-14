@@ -1,5 +1,5 @@
 import { NavItem } from '@/types';
-import { BookOpen, Folder, KeyRound, LayoutGrid, UserRoundCog, UsersRound } from 'lucide-react';
+import { BookOpen, Folder, KeyRound, LayoutGrid, Rocket, UserRoundCog, UsersRound } from 'lucide-react';
 
 export const mainNavItems: NavItem[] = [
     {
@@ -25,6 +25,22 @@ export const mainNavItems: NavItem[] = [
         href: '/users',
         icon: UsersRound,
         permission: ['users.index'],
+    },
+    {
+        title: 'Resources',
+        href: '#',
+        icon: Rocket,
+        permission: ['users.index'],
+        items: [
+            {
+                title: 'Repository',
+                href: 'https://github.com/laravel/react-starter-kit',
+            },
+            {
+                title: 'Documentation',
+                href: 'https://laravel.com/docs/starter-kits',
+            },
+          ],
     },
 ];
 

@@ -28,6 +28,16 @@
             html.dark {
                 background-color: oklch(0.145 0 0);
             }
+
+            html, html * {
+                scrollbar-color: oklch(0.90 0 0) oklch(0.99 0 0);
+                scrollbar-width: thin;
+            }
+
+            html.dark, html.dark * {
+                scrollbar-color: oklch(0.64 0 0) oklch(0.2 0 0);
+                scrollbar-width: thin;
+            }
         </style>
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
