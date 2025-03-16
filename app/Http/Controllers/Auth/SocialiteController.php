@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\SocialAccount;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 
