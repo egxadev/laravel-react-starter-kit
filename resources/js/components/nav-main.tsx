@@ -25,7 +25,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 <SidebarMenuItem>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <SidebarMenuButton isActive={items.some(({ items }) => items?.some(({ href }) => href === window.location.pathname))}>
+                                            <SidebarMenuButton isActive={items.some(({ items }) => items?.some(({ href }) => href === page.url))}>
                                                 {item.icon && <item.icon />}
                                                 <span>{item.title}</span>
                                             </SidebarMenuButton>
@@ -46,7 +46,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     </DropdownMenu>
                                 </SidebarMenuItem>
                             ) : (
-                                <Collapsible key={item.title} asChild defaultOpen={items.some(({ items }) => items?.some(({ href }) => href === window.location.pathname))} className="group/collapsible">
+                                <Collapsible key={item.title} asChild defaultOpen={items.some(({ items }) => items?.some(({ href }) => href === page.url))} className="group/collapsible">
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton>
@@ -59,7 +59,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuSub>
                                                 {item.items?.map((subItem) => (
                                                     <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton asChild isActive={window.location.pathname === subItem.href}>
+                                                        <SidebarMenuSubButton asChild isActive={page.url === subItem.href}>
                                                             <Link href={subItem.href} prefetch>
                                                                 <span>{subItem.title}</span>
                                                             </Link>
