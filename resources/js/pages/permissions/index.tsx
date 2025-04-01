@@ -14,9 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Permission } from '@/types/permission';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
-    ColumnFiltersState,
     SortingState,
     VisibilityState,
     flexRender,
@@ -31,29 +30,86 @@ import * as React from 'react';
 import { columns } from './partials/data-table';
 
 export default function PermissionIndex() {
-    const { breadcrumbs, permissions } = usePage<{
+    const { breadcrumbs, permissions, meta, filters } = usePage<{
         breadcrumbs: BreadcrumbItem[];
         permissions: Permission[];
+        meta: {
+            current_page: number;
+            last_page: number;
+            per_page: number;
+            total: number;
+            from: number;
+            to: number;
+        };
+        filters: {
+            search: string;
+            sort_by: string;
+            sort_dir: string;
+        };
     }>().props;
-    const [sorting, setSorting] = React.useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+
+    const [search, setSearch] = React.useState(filters.search);
+    const [sorting, setSorting] = React.useState<SortingState>([{ id: filters.sort_by, desc: filters.sort_dir === 'desc' }]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+
+    // Handle server-side operations
+    const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
+        router.get(
+            route('permissions.index'),
+            {
+                ...filters,
+                ...params,
+                page: params.page || meta.current_page,
+                per_page: params.per_page || meta.per_page,
+            },
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
+
+    // Debounce search input
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            handleServerOperation({ search, page: 1 });
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Handle sorting changes
+    React.useEffect(() => {
+        if (sorting.length > 0) {
+            handleServerOperation({
+                sort_by: sorting[0].id,
+                sort_dir: sorting[0].desc ? 'desc' : 'asc',
+                page: 1,
+            });
+        }
+    }, [sorting]);
 
     const table = useReactTable({
         data: permissions,
         columns,
+        manualPagination: true,
+        manualSorting: true,
+        manualFiltering: true,
+        pageCount: meta.last_page,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         state: {
             sorting,
-            columnFilters,
+            pagination: {
+                pageIndex: meta.current_page - 1,
+                pageSize: meta.per_page,
+            },
             columnVisibility,
             rowSelection,
         },
@@ -65,12 +121,7 @@ export default function PermissionIndex() {
 
             <div className="w-full px-4">
                 <div className="flex items-center py-4">
-                    <Input
-                        placeholder="Filter names..."
-                        value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-                        onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
-                        className="max-w-sm"
-                    />
+                    <Input placeholder="Filter names..." value={search} onChange={(event) => setSearch(event.target.value)} className="max-w-sm" />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
@@ -134,84 +185,67 @@ export default function PermissionIndex() {
 
                 <div className="flex items-center justify-end space-x-2 py-4">
                     <div className="text-muted-foreground flex-1 text-sm">
-                        Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
-                        {Math.min(
-                            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                            table.getFilteredRowModel().rows.length,
-                        )}{' '}
-                        of {table.getFilteredRowModel().rows.length} entries.
+                        Showing {meta.from} to {meta.to} of {meta.total} entries.
                     </div>
                     <div className="space-x-2">
-                        {/* <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                            Previous
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                            Next
-                        </Button> */}
                         <Pagination>
                             <PaginationContent>
                                 <PaginationItem>
                                     <PaginationPrevious
                                         href="#"
                                         onClick={() => {
-                                            if (table.getCanPreviousPage()) {
-                                                table.previousPage();
+                                            if (meta.current_page > 1) {
+                                                handleServerOperation({ page: meta.current_page - 1 });
                                             }
                                         }}
-                                        className={table.getCanPreviousPage() ? '' : 'cursor-default opacity-50'}
+                                        className={meta.current_page > 1 ? '' : 'cursor-default opacity-50'}
                                     />
                                 </PaginationItem>
-                                {table.getPageCount() > 5 ? (
+                                {meta.last_page > 5 ? (
                                     <>
                                         <PaginationItem>
                                             <PaginationLink
                                                 href="#"
-                                                isActive={table.getState().pagination.pageIndex === 0}
-                                                onClick={() => table.setPageIndex(0)}
+                                                isActive={meta.current_page === 1}
+                                                onClick={() => handleServerOperation({ page: 1 })}
                                             >
                                                 1
                                             </PaginationLink>
                                         </PaginationItem>
-                                        {table.getState().pagination.pageIndex > 2 && <PaginationEllipsis />}
-                                        {[
-                                            table.getState().pagination.pageIndex - 1,
-                                            table.getState().pagination.pageIndex,
-                                            table.getState().pagination.pageIndex + 1,
-                                        ]
-                                            .filter((page) => page > 0 && page < table.getPageCount() - 1)
+                                        {meta.current_page > 3 && <PaginationEllipsis />}
+                                        {[meta.current_page - 1, meta.current_page, meta.current_page + 1]
+                                            .filter((page) => page > 1 && page < meta.last_page)
                                             .map((page) => (
                                                 <PaginationItem key={page}>
                                                     <PaginationLink
                                                         href="#"
-                                                        isActive={table.getState().pagination.pageIndex === page}
-                                                        onClick={() => table.setPageIndex(page)}
+                                                        isActive={meta.current_page === page}
+                                                        onClick={() => handleServerOperation({ page })}
                                                     >
-                                                        {page + 1}
+                                                        {page}
                                                     </PaginationLink>
                                                 </PaginationItem>
                                             ))}
-                                        {table.getState().pagination.pageIndex < table.getPageCount() - 3 && <PaginationEllipsis />}
+                                        {meta.current_page < meta.last_page - 2 && <PaginationEllipsis />}
                                         <PaginationItem>
                                             <PaginationLink
                                                 href="#"
-                                                isActive={table.getState().pagination.pageIndex === table.getPageCount() - 1}
-                                                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                                                isActive={meta.current_page === meta.last_page}
+                                                onClick={() => handleServerOperation({ page: meta.last_page })}
                                             >
-                                                {table.getPageCount()}
+                                                {meta.last_page}
                                             </PaginationLink>
                                         </PaginationItem>
                                     </>
                                 ) : (
-                                    Array.from({
-                                        length: table.getPageCount(),
-                                    }).map((_, index) => (
-                                        <PaginationItem key={index}>
+                                    Array.from({ length: meta.last_page }, (_, i) => i + 1).map((page) => (
+                                        <PaginationItem key={page}>
                                             <PaginationLink
                                                 href="#"
-                                                isActive={table.getState().pagination.pageIndex === index}
-                                                onClick={() => table.setPageIndex(index)}
+                                                isActive={meta.current_page === page}
+                                                onClick={() => handleServerOperation({ page })}
                                             >
-                                                {index + 1}
+                                                {page}
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))
@@ -220,11 +254,11 @@ export default function PermissionIndex() {
                                     <PaginationNext
                                         href="#"
                                         onClick={() => {
-                                            if (table.getCanNextPage()) {
-                                                table.nextPage();
+                                            if (meta.current_page < meta.last_page) {
+                                                handleServerOperation({ page: meta.current_page + 1 });
                                             }
                                         }}
-                                        className={!table.getCanNextPage() ? 'cursor-default opacity-50' : ''}
+                                        className={meta.current_page < meta.last_page ? '' : 'cursor-default opacity-50'}
                                     />
                                 </PaginationItem>
                             </PaginationContent>

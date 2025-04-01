@@ -12,7 +12,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $breadcrumbs = [
             [
@@ -21,11 +21,48 @@ class UserController extends Controller
             ]
         ];
 
-        $users = User::all();
+        // Get query parameters
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sort_by', 'name');
+        $sortDir = $request->input('sort_dir', 'asc');
+        $search = $request->input('search', '');
+
+        // Base query
+        $query = User::query();
+
+        // Apply search filter
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+        }
+
+        // Apply sorting
+        $validSortColumns = ['id', 'name', 'email', 'created_at'];
+        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'id';
+        $sortDir = $sortDir === 'desc' ? 'desc' : 'asc';
+
+        $query->orderBy($sortBy, $sortDir);
+
+        // Paginate results
+        $users = $query->paginate($perPage, ['*'], 'page', $page);
 
         return inertia('users/index', [
             'breadcrumbs' => $breadcrumbs,
-            'users' => $users,
+            'users' => $users->items(),
+            'meta' => [
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem(),
+            ],
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_dir' => $sortDir,
+            ],
         ]);
     }
 
@@ -58,10 +95,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate( [
+        $request->validate([
             'name'     => 'required',
             'email'    => 'required|unique:users',
-            'password' => 'required|confirmed' 
+            'password' => 'required|confirmed'
         ]);
 
         $user = User::create([
@@ -117,25 +154,23 @@ class UserController extends Controller
     {
         $request->validate([
             'name'     => 'required',
-            'email'    => 'required|unique:users,email,'.$user->id,
-            'password' => 'nullable|confirmed' 
+            'email'    => 'required|unique:users,email,' . $user->id,
+            'password' => 'nullable|confirmed'
         ]);
 
-        if($request->password == '') {
+        if ($request->password == '') {
 
             $user->update([
                 'name'     => $request->name,
                 'email'    => $request->email
             ]);
-
         } else {
-                
+
             $user->update([
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => bcrypt($request->password)
             ]);
-            
         }
 
         $user->syncRoles($request->roles);
