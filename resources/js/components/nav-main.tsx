@@ -1,12 +1,22 @@
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from '@/components/ui/sidebar';
+import {
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
+    useSidebar,
+} from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import hasAnyPermission from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { ChevronRight } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
@@ -21,11 +31,13 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                 {items.map((item) =>
                     item.permission && hasAnyPermission(item.permission) ? (
                         item.items && item.items.length > 0 ? (
-                             state === 'collapsed' ? (
+                            state === 'collapsed' ? (
                                 <SidebarMenuItem>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <SidebarMenuButton isActive={items.some(({ items }) => items?.some(({ href }) => href === page.url))}>
+                                            <SidebarMenuButton
+                                                isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(href)))}
+                                            >
                                                 {item.icon && <item.icon />}
                                                 <span>{item.title}</span>
                                             </SidebarMenuButton>
@@ -46,7 +58,12 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     </DropdownMenu>
                                 </SidebarMenuItem>
                             ) : (
-                                <Collapsible key={item.title} asChild defaultOpen={items.some(({ items }) => items?.some(({ href }) => href === page.url))} className="group/collapsible">
+                                <Collapsible
+                                    key={item.title}
+                                    asChild
+                                    defaultOpen={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(href)))}
+                                    className="group/collapsible"
+                                >
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton>
@@ -59,7 +76,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuSub>
                                                 {item.items?.map((subItem) => (
                                                     <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton asChild isActive={page.url === subItem.href}>
+                                                        <SidebarMenuSubButton asChild isActive={page.url.startsWith(subItem.href)}>
                                                             <Link href={subItem.href} prefetch>
                                                                 <span>{subItem.title}</span>
                                                             </Link>
@@ -73,7 +90,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             )
                         ) : (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={item.href === page.url}>
+                                <SidebarMenuButton asChild isActive={page.url.startsWith(item.href)}>
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
@@ -81,7 +98,6 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         )
-                        
                     ) : null,
                 )}
             </SidebarMenu>

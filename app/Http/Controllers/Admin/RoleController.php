@@ -13,7 +13,7 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $breadcrumbs = [
             [
@@ -22,11 +22,47 @@ class RoleController extends Controller
             ]
         ];
 
-        $roles = Role::all();
+        // Get query parameters
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sort_by', 'name');
+        $sortDir = $request->input('sort_dir', 'asc');
+        $search = $request->input('search', '');
+
+        // Base query
+        $query = Role::query();
+
+        // Apply search filter
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        // Apply sorting
+        $validSortColumns = ['id', 'name', 'created_at'];
+        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'id';
+        $sortDir = $sortDir === 'desc' ? 'desc' : 'asc';
+
+        $query->orderBy($sortBy, $sortDir);
+
+        // Paginate results
+        $roles = $query->paginate($perPage, ['*'], 'page', $page);
 
         return inertia('roles/index', [
             'breadcrumbs' => $breadcrumbs,
-            'roles' => $roles,
+            'roles' => $roles->items(),
+            'meta' => [
+                'current_page' => $roles->currentPage(),
+                'last_page' => $roles->lastPage(),
+                'per_page' => $roles->perPage(),
+                'total' => $roles->total(),
+                'from' => $roles->firstItem(),
+                'to' => $roles->lastItem(),
+            ],
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_dir' => $sortDir,
+            ],
         ]);
     }
 
