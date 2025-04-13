@@ -52,6 +52,7 @@ export default function RoleIndex() {
     const [sorting, setSorting] = React.useState<SortingState>([{ id: filters.sort_by, desc: filters.sort_dir === 'desc' }]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+    const [isInitialRender, setIsInitialRender] = React.useState(true);
 
     // Handle server-side operations
     const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
@@ -72,6 +73,8 @@ export default function RoleIndex() {
 
     // Debounce search input
     React.useEffect(() => {
+        if (isInitialRender) return;
+
         const timer = setTimeout(() => {
             handleServerOperation({ search, page: 1 });
         }, 500);
@@ -81,6 +84,8 @@ export default function RoleIndex() {
 
     // Handle sorting changes
     React.useEffect(() => {
+        if (isInitialRender) return;
+
         if (sorting.length > 0) {
             handleServerOperation({
                 sort_by: sorting[0].id,
@@ -89,6 +94,11 @@ export default function RoleIndex() {
             });
         }
     }, [sorting]);
+
+    // Reset initial render flag
+    React.useEffect(() => {
+        setIsInitialRender(false);
+    }, []);
 
     const table = useReactTable({
         data: roles,
