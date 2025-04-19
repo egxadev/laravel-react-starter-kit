@@ -13,10 +13,10 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // permissions
-    Route::get('/permissions', PermissionController::class)->name('permissions.index')
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index')
         ->middleware('permission:permissions.index');
 
     // roles
