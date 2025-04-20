@@ -2,28 +2,39 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Spatie\Permission\Models\Role;
 
 class RoleService
 {
+    private const DEFAULT_PER_PAGE = 10;
+    private const DEFAULT_SORT_BY = 'name';
+    private const DEFAULT_SORT_DIR = 'asc';
+    private const FILTERABLE_COLUMNS = ['id', 'name', 'created_at'];
+
+    /**
+     * Get paginated roles with filters.
+     *
+     * @param array $filters
+     * @return array
+     */
     public function getPaginatedRoles(array $filters): array
     {
-        $perPage = $filters['per_page'] ?? 10;
-        $page = $filters['page'] ?? 1;
-        $sortBy = $filters['sort_by'] ?? 'name';
-        $sortDir = $filters['sort_dir'] ?? 'asc';
-        $search = $filters['search'] ?? '';
+        $perPage = (int) ($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
+        $page = (int) ($filters['page'] ?? 1);
+        $sortBy  = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
+        $sortDir = in_array($dir = strtolower($filters['sort_dir'] ?? self::DEFAULT_SORT_DIR), ['asc', 'desc']) ? $dir : self::DEFAULT_SORT_DIR;
+
+        $search = trim($filters['search'] ?? '');
 
         $query = Role::query();
 
-        if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        $validSortColumns = ['id', 'name', 'created_at'];
-        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'id';
-        $sortDir = $sortDir === 'desc' ? 'desc' : 'asc';
+        $query->when($search, function ($query) use ($search) {
+            $query->where(function ($subQuery) use ($search) {
+                foreach (self::FILTERABLE_COLUMNS as $column) {
+                    $subQuery->orWhere($column, 'like', "%{$search}%");
+                }
+            });
+        });
 
         $query->orderBy($sortBy, $sortDir);
 
@@ -39,41 +50,58 @@ class RoleService
                 'from' => $roles->firstItem(),
                 'to' => $roles->lastItem(),
             ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ],
+            'filters' => compact('search', 'sortBy', 'sortDir'),
         ];
     }
 
+    /**
+     * Get role with permissions by ID.
+     *
+     * @param string $id
+     * @return Role
+     */
     public function getRoleById(string $id): Role
     {
         return Role::with('permissions')->findOrFail($id);
     }
 
+    /**
+     * Create a new role and assign permissions.
+     *
+     * @param array $data
+     * @return Role
+     */
     public function createRole(array $data): Role
     {
         $role = Role::create(['name' => $data['name']]);
-
         $role->givePermissionTo($data['permissions']);
 
         return $role;
     }
 
+    /**
+     * Update role and sync permissions.
+     *
+     * @param Role $role
+     * @param array $data
+     * @return Role
+     */
     public function updateRole(Role $role, array $data): Role
     {
         $role->update(['name' => $data['name']]);
-
         $role->syncPermissions($data['permissions']);
 
         return $role;
     }
 
+    /**
+     * Delete role by ID.
+     *
+     * @param string $id
+     * @return bool
+     */
     public function deleteRole(string $id): bool
     {
-        $role = Role::findOrFail($id);
-
-        return $role->delete();
+        return Role::findOrFail($id)->delete();
     }
 }

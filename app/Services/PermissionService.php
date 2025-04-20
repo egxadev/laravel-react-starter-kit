@@ -6,23 +6,34 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionService
 {
+    private const DEFAULT_PER_PAGE = 10;
+    private const DEFAULT_SORT_BY = 'name';
+    private const DEFAULT_SORT_DIR = 'asc';
+    private const FILTERABLE_COLUMNS = ['id', 'name', 'created_at'];
+
+    /**
+     * Get paginated permissions with filters.
+     *
+     * @param array $filters
+     * @return array
+     */
     public function getPaginatedPermissions(array $filters): array
     {
-        $perPage = $filters['per_page'] ?? 10;
-        $page = $filters['page'] ?? 1;
-        $sortBy = $filters['sort_by'] ?? 'name';
-        $sortDir = $filters['sort_dir'] ?? 'asc';
-        $search = $filters['search'] ?? '';
+        $perPage = (int) ($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
+        $page = (int) ($filters['page'] ?? 1);
+        $sortBy  = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
+        $sortDir = in_array($dir = strtolower($filters['sort_dir'] ?? self::DEFAULT_SORT_DIR), ['asc', 'desc']) ? $dir : self::DEFAULT_SORT_DIR;
+        $search = trim($filters['search'] ?? '');
 
         $query = Permission::query();
 
-        if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        $validSortColumns = ['id', 'name', 'created_at'];
-        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'name';
-        $sortDir = $sortDir === 'desc' ? 'desc' : 'asc';
+        $query->when($search, function ($query) use ($search) {
+            $query->where(function ($subQuery) use ($search) {
+                foreach (self::FILTERABLE_COLUMNS as $column) {
+                    $subQuery->orWhere($column, 'like', "%{$search}%");
+                }
+            });
+        });
 
         $query->orderBy($sortBy, $sortDir);
 
@@ -38,23 +49,30 @@ class PermissionService
                 'from' => $permissions->firstItem(),
                 'to' => $permissions->lastItem(),
             ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ],
+            'filters' => compact('search', 'sortBy', 'sortDir'),
         ];
     }
 
+    /**
+     * Create a new permission.
+     *
+     * @param array $data
+     * @return Permission
+     */
     public function createPermission(array $data): Permission
     {
-        $permission = Permission::create([
+        return Permission::create([
             'name' => $data['name'],
         ]);
-
-        return $permission;
     }
 
+    /**
+     * Update existing permission.
+     *
+     * @param Permission $permission
+     * @param array $data
+     * @return Permission
+     */
     public function updatePermission(Permission $permission, array $data): Permission
     {
         $permission->update([
@@ -64,9 +82,14 @@ class PermissionService
         return $permission;
     }
 
+    /**
+     * Delete permission by ID.
+     *
+     * @param string $id
+     * @return bool
+     */
     public function deletePermission(string $id): bool
     {
-        $permission = Permission::findOrFail($id);
-        return $permission->delete();
+        return Permission::findOrFail($id)->delete();
     }
 }
