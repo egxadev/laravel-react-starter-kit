@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use App\Services\RoleService;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
@@ -10,6 +11,13 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -18,52 +26,16 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => '/roles'
+                'href' => route('roles.index')
             ]
         ];
 
-        // Get query parameters
-        $perPage = $request->input('per_page', 10);
-        $page = $request->input('page', 1);
-        $sortBy = $request->input('sort_by', 'name');
-        $sortDir = $request->input('sort_dir', 'asc');
-        $search = $request->input('search', '');
+        $data = $this->roleService->getPaginatedRoles($request->all());
 
-        // Base query
-        $query = Role::query();
-
-        // Apply search filter
-        if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        // Apply sorting
-        $validSortColumns = ['id', 'name', 'created_at'];
-        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'id';
-        $sortDir = $sortDir === 'desc' ? 'desc' : 'asc';
-
-        $query->orderBy($sortBy, $sortDir);
-
-        // Paginate results
-        $roles = $query->paginate($perPage, ['*'], 'page', $page);
-
-        return inertia('roles/index', [
-            'breadcrumbs' => $breadcrumbs,
-            'roles' => $roles->items(),
-            'meta' => [
-                'current_page' => $roles->currentPage(),
-                'last_page' => $roles->lastPage(),
-                'per_page' => $roles->perPage(),
-                'total' => $roles->total(),
-                'from' => $roles->firstItem(),
-                'to' => $roles->lastItem(),
-            ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ],
-        ]);
+        return inertia('roles/index', array_merge(
+            ['breadcrumbs' => $breadcrumbs],
+            $data
+        ));
     }
 
     /**
@@ -74,11 +46,11 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => '/roles'
+                'href' => route('roles.index')
             ],
             [
                 'title' => 'Create',
-                'href' => '/roles/create'
+                'href' => route('roles.create')
             ]
         ];
 
@@ -95,13 +67,8 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        //create role
-        $role = Role::create(['name' => $request->name]);
+        $this->roleService->createRole($request->all());
 
-        //assign permissions to role
-        $role->givePermissionTo($request->permissions);
-
-        //redirect
         return redirect()->route('roles.index');
     }
 
@@ -113,15 +80,15 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => '/roles'
+                'href' => route('roles.index')
             ],
             [
                 'title' => 'Edit',
-                'href' => '/roles/' . $id . '/edit'
+                'href' => route('roles.edit', $id)
             ]
         ];
 
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = $this->roleService->getRoleById($id);
 
         $permissions = Permission::all();
 
@@ -137,9 +104,7 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role)
     {
-        $role->update(['name' => $request->name]);
-
-        $role->syncPermissions($request->permissions);
+        $this->roleService->updateRole($role, $request->all());
 
         return redirect()->route('roles.index');
     }
@@ -149,9 +114,7 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        $role = Role::findOrFail($id);
-
-        $role->delete();
+        $this->roleService->deleteRole($id);
 
         return redirect()->route('roles.index');
     }
