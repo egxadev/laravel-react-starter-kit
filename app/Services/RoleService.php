@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Spatie\Permission\Models\Role;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class RoleService
 {
@@ -41,42 +42,50 @@ class RoleService
         $roles = $query->paginate($perPage, ['*'], 'page', $page);
 
         return [
-            'roles' => $roles->items(),
-            'meta' => [
-                'current_page' => $roles->currentPage(),
-                'last_page' => $roles->lastPage(),
-                'per_page' => $roles->perPage(),
-                'total' => $roles->total(),
-                'from' => $roles->firstItem(),
-                'to' => $roles->lastItem(),
+            'data'  => $roles->items(),
+            'meta'  => [
+                'current_page'  => $roles->currentPage(),
+                'last_page'     => $roles->lastPage(),
+                'per_page'      => $roles->perPage(),
+                'total'         => $roles->total(),
+                'from'          => $roles->firstItem(),
+                'to'            => $roles->lastItem(),
             ],
             'filters' => compact('search', 'sortBy', 'sortDir'),
         ];
     }
 
     /**
-     * Get role with permissions by ID.
-     *
-     * @param string $id
-     * @return Role
-     */
-    public function getRoleById(string $id): Role
-    {
-        return Role::with('permissions')->findOrFail($id);
-    }
-
-    /**
      * Create a new role and assign permissions.
      *
      * @param array $data
-     * @return Role
+     * @return array
      */
-    public function createRole(array $data): Role
+    public function createRole(array $data): array
     {
-        $role = Role::create(['name' => $data['name']]);
-        $role->givePermissionTo($data['permissions']);
+        try {
+            $role = \DB::transaction(function () use ($data) {
+                $role = Role::create([
+                    'name'          => $data['name'],
+                    'created_by'    => auth()->id()
+                ]);
+                $role->givePermissionTo($data['permissions']);
 
-        return $role;
+                return $role;
+            });
+
+            return [
+                'success'   => true,
+                'message'   => 'Role created successfully.',
+                'role'      => $role,
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to create role: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to create role.',
+            ];
+        }
     }
 
     /**
@@ -86,22 +95,67 @@ class RoleService
      * @param array $data
      * @return Role
      */
-    public function updateRole(Role $role, array $data): Role
+    public function updateRole(Role $role, array $data): array
     {
-        $role->update(['name' => $data['name']]);
-        $role->syncPermissions($data['permissions']);
+        try {
+            \DB::transaction(function () use ($role, $data) {
+                $role->update([
+                    'name'          => $data['name'],
+                    'updated_by'    => auth()->id()
+                ]);
+                $role->syncPermissions($data['permissions']);
+            });
 
-        return $role;
+            return [
+                'success'   => true,
+                'message'   => 'Role updated successfully.',
+                'data'      => $role->fresh(),
+            ];
+        } catch (ModelNotFoundException $e) {
+            return [
+                'success'   => false,
+                'message'   => 'Role not found.',
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to update role: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to update role.',
+            ];
+        }
     }
 
     /**
      * Delete role by ID.
      *
      * @param string $id
-     * @return bool
+     * @return array
      */
-    public function deleteRole(string $id): bool
+    public function deleteRole(string $id): array
     {
-        return Role::findOrFail($id)->delete();
+        try {
+            $role = Role::findOrFail($id);
+
+            return \DB::transaction(function () use ($role) {
+                $role->update(['deleted_by' => auth()->id()]);
+                $role->delete();
+
+                return [
+                    'success'   => true,
+                    'message'   => 'Role deleted successfully.'
+                ];
+            });
+        } catch (ModelNotFoundException $e) {
+            return [
+                'success'   => false,
+                'message'   => 'Role not found.'
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete role: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to delete role.'
+            ];
+        }
     }
 }

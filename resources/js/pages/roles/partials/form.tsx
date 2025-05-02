@@ -8,7 +8,6 @@ import { Role } from '@/types/role';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router, usePage } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z.object({
@@ -20,13 +19,13 @@ const formSchema = z.object({
 
 export function RoleForm({
     mode,
-    role,
     permissions,
+    role,
     className,
 }: PageProps<{
     mode: 'create' | 'edit';
-    role?: Role;
     permissions: Permission[];
+    role?: Role;
     className: string;
 }>) {
     const { errors } = usePage().props;
@@ -42,22 +41,23 @@ export function RoleForm({
     function onSubmit(values: z.infer<typeof formSchema>) {
         const isCreateMode = mode === 'create';
         const url = isCreateMode ? '/roles' : `/roles/${role?.id}`;
-        const message = isCreateMode ? 'Role created successfully.' : 'Role updated successfully.';
 
         if (isCreateMode) {
             router.post(url, values, {
                 onSuccess: () => {
-                    setTimeout(() => {
-                        toast.success(message);
-                    }, 500);
+                    console.log('Role created successfully.');
+                },
+                onError: () => {
+                    console.error('Failed to create role.');
                 },
             });
         } else {
             router.put(url, values, {
                 onSuccess: () => {
-                    setTimeout(() => {
-                        toast.success(message);
-                    }, 500);
+                    console.log('Role updated successfully.');
+                },
+                onError: () => {
+                    console.error('Failed to update role.');
                 },
             });
         }

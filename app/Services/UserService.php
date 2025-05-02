@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserService
 {
@@ -41,14 +42,14 @@ class UserService
         $users = $query->paginate($perPage, ['*'], 'page', $page);
 
         return [
-            'users' => $users->items(),
-            'meta' => [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'per_page' => $users->perPage(),
-                'total' => $users->total(),
-                'from' => $users->firstItem(),
-                'to' => $users->lastItem(),
+            'data'  => $users->items(),
+            'meta'  => [
+                'current_page'  => $users->currentPage(),
+                'last_page'     => $users->lastPage(),
+                'per_page'      => $users->perPage(),
+                'total'         => $users->total(),
+                'from'          => $users->firstItem(),
+                'to'            => $users->lastItem(),
             ],
             'filters' => compact('search', 'sortBy', 'sortDir'),
         ];
@@ -60,17 +61,34 @@ class UserService
      * @param array $data
      * @return User
      */
-    public function createUser(array $data): User
+    public function createUser(array $data): array
     {
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        try {
+            $user = \DB::transaction(function () use ($data) {
+                $user = User::create([
+                    'name'          => $data['name'],
+                    'email'         => $data['email'],
+                    'password'      => bcrypt($data['password']),
+                    'created_by'    => auth()->id(),
+                ]);
 
-        $user->assignRole($data['roles']);
+                $user->assignRole($data['roles']);
 
-        return $user;
+                return $user;
+            });
+
+            return [
+                'success'   => true,
+                'message'   => 'User created successfully.',
+                'user'      => $user,
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to create user: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to create user.',
+            ];
+        }
     }
 
     /**
@@ -80,31 +98,74 @@ class UserService
      * @param array $data
      * @return User
      */
-    public function updateUser(User $user, array $data): User
+    public function updateUser(User $user, array $data): array
     {
-        $updateData = [
-            'name'  => $data['name'],
-            'email' => $data['email'],
-        ];
+        try {
+            $updateData = [
+                'name'          => $data['name'],
+                'email'         => $data['email'],
+                'updated_by'    => auth()->id(),
+            ];
 
-        if (!empty($data['password'])) {
-            $updateData['password'] = bcrypt($data['password']);
+            if (!empty($data['password'])) {
+                $updateData['password'] = bcrypt($data['password']);
+            }
+
+            \DB::transaction(function () use ($user, $updateData, $data) {
+                $user->update($updateData);
+                $user->syncRoles($data['roles']);
+            });
+
+            return [
+                'success'   => true,
+                'message'   => 'User updated successfully.',
+                'data'      => $user->fresh(),
+            ];
+        } catch (ModelNotFoundException $e) {
+            return [
+                'success'   => false,
+                'message'   => 'User not found.',
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to update user: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to update user.',
+            ];
         }
-
-        $user->update($updateData);
-        $user->syncRoles($data['roles']);
-
-        return $user;
     }
 
     /**
      * Delete user by ID.
      *
      * @param string $id
-     * @return bool
+     * @return array
      */
-    public function deleteUser(string $id): bool
+    public function deleteUser(string $id): array
     {
-        return User::findOrFail($id)->delete();
+        try {
+            $user = User::findOrFail($id);
+
+            return \DB::transaction(function () use ($user) {
+                $user->update(['deleted_by' => auth()->id()]);
+                $user->delete();
+
+                return [
+                    'success'   => true,
+                    'message'   => 'User deleted successfully.'
+                ];
+            });
+        } catch (ModelNotFoundException $e) {
+            return [
+                'success'   => false,
+                'message'   => 'User not found.'
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete user: ' . $e->getMessage());
+            return [
+                'success'   => false,
+                'message'   => 'Failed to delete user.'
+            ];
+        }
     }
 }

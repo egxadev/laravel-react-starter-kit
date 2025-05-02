@@ -54,11 +54,9 @@ class RoleController extends Controller
             ]
         ];
 
-        $permissions = Permission::all();
-
         return inertia('roles/create', [
             'breadcrumbs' => $breadcrumbs,
-            'permissions' => $permissions,
+            'permissions' => Permission::all(),
         ]);
     }
 
@@ -67,9 +65,13 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request)
     {
-        $this->roleService->createRole($request->all());
+        $response = $this->roleService->createRole($request->all());
 
-        return redirect()->route('roles.index');
+        if ($response['success']) {
+            return redirect()->route('roles.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('roles.index')->with('error', $response['message']);
+        }
     }
 
     /**
@@ -88,14 +90,10 @@ class RoleController extends Controller
             ]
         ];
 
-        $role = $this->roleService->getRoleById($id);
-
-        $permissions = Permission::all();
-
         return inertia('roles/edit', [
             'breadcrumbs' => $breadcrumbs,
-            'role'          => $role,
-            'permissions'   => $permissions,
+            'role'          => Role::with('permissions')->findOrFail($id),
+            'permissions'   => Permission::all(),
         ]);
     }
 
@@ -104,9 +102,13 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role)
     {
-        $this->roleService->updateRole($role, $request->all());
+        $response = $this->roleService->updateRole($role, $request->all());
 
-        return redirect()->route('roles.index');
+        if ($response['success']) {
+            return redirect()->route('roles.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('roles.index')->with('error', $response['message']);
+        }
     }
 
     /**
@@ -114,8 +116,12 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->roleService->deleteRole($id);
+        $response = $this->roleService->deleteRole($id);
 
-        return redirect()->route('roles.index');
+        if ($response['success']) {
+            return redirect()->route('roles.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('roles.index')->with('error', $response['message']);
+        }
     }
 }
