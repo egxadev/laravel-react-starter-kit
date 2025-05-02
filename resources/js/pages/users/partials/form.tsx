@@ -8,7 +8,6 @@ import { User } from '@/types/user';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router, usePage } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formSchema = z
@@ -49,22 +48,23 @@ export function UserForm({
     function onSubmit(values: z.infer<typeof formSchema>) {
         const isCreateMode = mode === 'create';
         const url = isCreateMode ? '/users' : `/users/${user?.id}`;
-        const message = isCreateMode ? 'User created successfully.' : 'User updated successfully.';
 
         if (isCreateMode) {
             router.post(url, values, {
                 onSuccess: () => {
-                    setTimeout(() => {
-                        toast.success(message);
-                    }, 500);
+                    console.log('User created successfully.');
+                },
+                onError: () => {
+                    console.error('Failed to create user.');
                 },
             });
         } else {
             router.put(url, values, {
                 onSuccess: () => {
-                    setTimeout(() => {
-                        toast.success(message);
-                    }, 500);
+                    console.log('User updated successfully.');
+                },
+                onError: () => {
+                    console.error('Failed to update user.');
                 },
             });
         }

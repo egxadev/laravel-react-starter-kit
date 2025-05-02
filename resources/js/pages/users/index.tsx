@@ -27,12 +27,13 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
+import { toast } from 'sonner';
 import { columns } from './partials/data-table';
 
-export default function RoleIndex() {
-    const { breadcrumbs, users, meta, filters } = usePage<{
+export default function UserIndex() {
+    const { breadcrumbs, data, meta, filters, flash } = usePage<{
         breadcrumbs: BreadcrumbItem[];
-        users: User[];
+        data: User[];
         meta: {
             current_page: number;
             last_page: number;
@@ -46,30 +47,35 @@ export default function RoleIndex() {
             sort_by: string;
             sort_dir: string;
         };
+        flash: {
+            success: string;
+            error: string;
+            warning: string;
+            info: string;
+        };
     }>().props;
-
     const [search, setSearch] = React.useState(filters.search);
     const [sorting, setSorting] = React.useState<SortingState>([{ id: filters.sort_by, desc: filters.sort_dir === 'desc' }]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [isInitialRender, setIsInitialRender] = React.useState(true);
+    const [flashStatus, setFlashStatus] = React.useState(false);
 
-    // Handle server-side operations
-    const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
-        router.get(
-            route('users.index'),
-            {
-                ...filters,
-                ...params,
-                page: params.page || meta.current_page,
-                per_page: params.per_page || meta.per_page,
-            },
-            {
-                preserveState: true,
-                replace: true,
-            },
-        );
-    };
+    // Reset initial render flag
+    React.useEffect(() => {
+        setIsInitialRender(false);
+    }, []);
+
+    // Handle flash messages
+    React.useEffect(() => {
+        if (!flashStatus) {
+            if (flash.success) toast.success(flash.success);
+            if (flash.error) toast.error(flash.error);
+            if (flash.warning) toast.warning(flash.warning);
+            if (flash.info) toast.info(flash.info);
+            setFlashStatus(true);
+        }
+    }, [flash, flashStatus]);
 
     // Debounce search input
     React.useEffect(() => {
@@ -95,13 +101,25 @@ export default function RoleIndex() {
         }
     }, [sorting]);
 
-    // Reset initial render flag
-    React.useEffect(() => {
-        setIsInitialRender(false);
-    }, []);
+    // Handle server-side operations
+    const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
+        router.get(
+            route('users.index'),
+            {
+                ...filters,
+                ...params,
+                page: params.page || meta.current_page,
+                per_page: params.per_page || meta.per_page,
+            },
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
 
     const table = useReactTable({
-        data: users,
+        data,
         columns,
         manualPagination: true,
         manualSorting: true,
@@ -160,7 +178,7 @@ export default function RoleIndex() {
                     </div>
 
                     <Link className="ml-4" href={route('users.create')}>
-                        <Button>Create Role</Button>
+                        <Button>Create User</Button>
                     </Link>
                 </div>
 

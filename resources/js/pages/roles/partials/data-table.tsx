@@ -24,7 +24,6 @@ import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 export const columns: ColumnDef<Role>[] = [
     {
@@ -53,9 +52,15 @@ const ActionCell = ({ data }: { data: Role }) => {
 
     function handleDelete() {
         router.delete(`roles/${data.id}`, {
+            preserveState: false,
+            preserveScroll: true,
             onSuccess: () => {
-                toast.success('Role deleted successfully.');
                 setIsDropdownOpen(false);
+                console.log('Role deleted successfully.');
+            },
+            onError: () => {
+                setIsDropdownOpen(false);
+                console.error('Failed to delete role.');
             },
         });
     }

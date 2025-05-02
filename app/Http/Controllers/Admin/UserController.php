@@ -65,9 +65,13 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        $this->userService->createUser($request->validated());
+        $response = $this->userService->createUser($request->validated());
 
-        return redirect()->route('users.index');
+        if ($response['success']) {
+            return redirect()->route('users.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('users.index')->with('error', $response['message']);
+        }
     }
 
     /**
@@ -86,12 +90,10 @@ class UserController extends Controller
             ]
         ];
 
-        $user = User::with('roles')->findOrFail($id);
-
         return inertia('users/edit', [
             'breadcrumbs' => $breadcrumbs,
             'roles' => Role::all(),
-            'user' => $user,
+            'user' => User::with('roles')->findOrFail($id),
         ]);
     }
 
@@ -100,9 +102,13 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user)
     {
-        $this->userService->updateUser($user, $request->validated());
+        $response = $this->userService->updateUser($user, $request->validated());
 
-        return redirect()->route('users.index');
+        if ($response['success']) {
+            return redirect()->route('users.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('users.index')->with('error', $response['message']);
+        }
     }
 
     /**
@@ -110,8 +116,12 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->userService->deleteUser($id);
+        $response = $this->userService->deleteUser($id);
 
-        return redirect()->route('users.index');
+        if ($response['success']) {
+            return redirect()->route('users.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('users.index')->with('error', $response['message']);
+        }
     }
 }

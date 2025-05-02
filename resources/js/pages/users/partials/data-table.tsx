@@ -24,7 +24,6 @@ import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 export const columns: ColumnDef<User>[] = [
     {
@@ -65,9 +64,15 @@ const ActionCell = ({ data }: { data: User }) => {
 
     function handleDelete() {
         router.delete(`users/${data.id}`, {
+            preserveState: false,
+            preserveScroll: true,
             onSuccess: () => {
-                toast.success('User deleted successfully.');
                 setIsDropdownOpen(false);
+                console.log('User deleted successfully.');
+            },
+            onError: () => {
+                setIsDropdownOpen(false);
+                console.error('Failed to delete user.');
             },
         });
     }
