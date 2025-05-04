@@ -149,8 +149,13 @@ export default function RoleIndex() {
 
             <div className="w-full px-4">
                 <div className="flex items-center py-4">
-                    <Input placeholder="Filter names..." value={search} onChange={(event) => setSearch(event.target.value)} className="max-w-sm" />
-                    <div className="ml-auto">
+                    <Input
+                        placeholder="Filter names..."
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        className="mr-1 max-w-sm"
+                    />
+                    <div className="ml-auto flex flex-row gap-1">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="ml-auto">
@@ -175,11 +180,11 @@ export default function RoleIndex() {
                                     })}
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    </div>
 
-                    <Link className="ml-4" href={route('roles.create')}>
-                        <Button>Create Role</Button>
-                    </Link>
+                        <Link href={route('roles.create')}>
+                            <Button>Add Role</Button>
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="rounded-md border">
