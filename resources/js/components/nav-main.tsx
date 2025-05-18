@@ -23,6 +23,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const { state } = useSidebar();
     const isMobile = useIsMobile();
     const cleanup = useMobileNavigation();
+    const path = page.url.split('?')[0];
 
     return (
         <SidebarGroup>
@@ -61,7 +62,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 <Collapsible
                                     key={item.title}
                                     asChild
-                                    defaultOpen={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(href)))}
+                                    defaultOpen={item.items?.some(subItem => subItem.href === path)}
                                     className="group/collapsible"
                                 >
                                     <SidebarMenuItem>
