@@ -1,7 +1,7 @@
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { settingsNavItems } from '@/constants/routes';
+import { settingsNavItems } from '@/constants/navigation';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';

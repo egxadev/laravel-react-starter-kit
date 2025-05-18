@@ -2,7 +2,7 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { footerNavItems, mainNavItems } from '@/constants/routes';
+import { footerNavItems, mainNavItems } from '@/constants/navigation';
 import { Link } from '@inertiajs/react';
 import AppLogo from './app-logo';
 
