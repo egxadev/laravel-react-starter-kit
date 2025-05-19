@@ -51,7 +51,11 @@ class UserService
                 'from'          => $users->firstItem(),
                 'to'            => $users->lastItem(),
             ],
-            'filters' => compact('search', 'sortBy', 'sortDir'),
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_dir' => $sortDir,
+            ]
         ];
     }
 

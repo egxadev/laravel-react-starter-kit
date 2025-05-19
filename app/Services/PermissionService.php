@@ -49,7 +49,11 @@ class PermissionService
                 'from' => $permissions->firstItem(),
                 'to' => $permissions->lastItem(),
             ],
-            'filters' => compact('search', 'sortBy', 'sortDir'),
+            'filters' => [
+                'search' => $search,
+                'sort_by' => $sortBy,
+                'sort_dir' => $sortDir,
+            ]
         ];
     }
 
