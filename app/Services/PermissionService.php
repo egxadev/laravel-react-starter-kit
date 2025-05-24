@@ -37,17 +37,17 @@ class PermissionService
 
         $query->orderBy($sortBy, $sortDir);
 
-        $permissions = $query->paginate($perPage, ['*'], 'page', $page);
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return [
-            'permissions' => $permissions->items(),
+            'permissions' => $data->items(),
             'meta' => [
-                'current_page' => $permissions->currentPage(),
-                'last_page' => $permissions->lastPage(),
-                'per_page' => $permissions->perPage(),
-                'total' => $permissions->total(),
-                'from' => $permissions->firstItem(),
-                'to' => $permissions->lastItem(),
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+                'from' => $data->firstItem(),
+                'to' => $data->lastItem(),
             ],
             'filters' => [
                 'search' => $search,
