@@ -39,17 +39,17 @@ class RoleService
 
         $query->orderBy($sortBy, $sortDir);
 
-        $roles = $query->paginate($perPage, ['*'], 'page', $page);
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return [
-            'data'  => $roles->items(),
+            'data'  => $data->items(),
             'meta'  => [
-                'current_page'  => $roles->currentPage(),
-                'last_page'     => $roles->lastPage(),
-                'per_page'      => $roles->perPage(),
-                'total'         => $roles->total(),
-                'from'          => $roles->firstItem(),
-                'to'            => $roles->lastItem(),
+                'current_page'  => $data->currentPage(),
+                'last_page'     => $data->lastPage(),
+                'per_page'      => $data->perPage(),
+                'total'         => $data->total(),
+                'from'          => $data->firstItem(),
+                'to'            => $data->lastItem(),
             ],
             'filters' => [
                 'search' => $search,

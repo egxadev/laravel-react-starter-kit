@@ -39,17 +39,17 @@ class UserService
 
         $query->orderBy($sortBy, $sortDir);
 
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return [
-            'data'  => $users->items(),
+            'data'  => $data->items(),
             'meta'  => [
-                'current_page'  => $users->currentPage(),
-                'last_page'     => $users->lastPage(),
-                'per_page'      => $users->perPage(),
-                'total'         => $users->total(),
-                'from'          => $users->firstItem(),
-                'to'            => $users->lastItem(),
+                'current_page'  => $data->currentPage(),
+                'last_page'     => $data->lastPage(),
+                'per_page'      => $data->perPage(),
+                'total'         => $data->total(),
+                'from'          => $data->firstItem(),
+                'to'            => $data->lastItem(),
             ],
             'filters' => [
                 'search' => $search,
