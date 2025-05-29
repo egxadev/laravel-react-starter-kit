@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Spatie\Permission\Models\Permission;
+use App\Traits\ResponseFormatter;
 
 class PermissionService
 {
@@ -39,61 +40,17 @@ class PermissionService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return [
-            'permissions' => $data->items(),
-            'meta' => [
-                'current_page' => $data->currentPage(),
-                'last_page' => $data->lastPage(),
-                'per_page' => $data->perPage(),
-                'total' => $data->total(),
-                'from' => $data->firstItem(),
-                'to' => $data->lastItem(),
-            ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ]
-        ];
-    }
-
-    /**
-     * Create a new permission.
-     *
-     * @param array $data
-     * @return Permission
-     */
-    public function createPermission(array $data): Permission
-    {
-        return Permission::create([
-            'name' => $data['name'],
+        return ResponseFormatter::paginated($data->items(), [
+            'current_page'  => $data->currentPage(),
+            'last_page'     => $data->lastPage(),
+            'per_page'      => $data->perPage(),
+            'total'         => $data->total(),
+            'from'          => $data->firstItem(),
+            'to'            => $data->lastItem(),
+        ], [
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir,
         ]);
-    }
-
-    /**
-     * Update existing permission.
-     *
-     * @param Permission $permission
-     * @param array $data
-     * @return Permission
-     */
-    public function updatePermission(Permission $permission, array $data): Permission
-    {
-        $permission->update([
-            'name' => $data['name'],
-        ]);
-
-        return $permission;
-    }
-
-    /**
-     * Delete permission by ID.
-     *
-     * @param string $id
-     * @return bool
-     */
-    public function deletePermission(string $id): bool
-    {
-        return Permission::findOrFail($id)->delete();
     }
 }
