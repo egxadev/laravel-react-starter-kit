@@ -11,7 +11,7 @@ trait ResponseFormatter
      * @param string $message
      * @return array
      */
-    public static function success($data = null, string $message = 'Success'): array
+    protected function successResponse($data = null, string $message = 'Success'): array
     {
         $response = [
             'success' => true,
@@ -32,7 +32,7 @@ trait ResponseFormatter
      * @param mixed $errors
      * @return array
      */
-    public static function error(string $message = 'Error', $errors = null): array
+    protected function errorResponse(string $message = 'Error', $errors = null): array
     {
         return [
             'success' => false,
@@ -50,7 +50,7 @@ trait ResponseFormatter
      * @param string $message
      * @return array
      */
-    public static function paginated($data, array $meta, array $filters = [], string $message = 'Success'): array
+    protected function paginatedResponse($data, array $meta, array $filters = [], string $message = 'Success'): array
     {
         return [
             'success' => true,
