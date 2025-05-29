@@ -8,6 +8,8 @@ use App\Traits\ResponseFormatter;
 
 class RoleService
 {
+    use ResponseFormatter;
+
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
@@ -42,7 +44,7 @@ class RoleService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return ResponseFormatter::paginated($data->items(), [
+        return $this->paginatedResponse($data->items(), [
             'current_page'  => $data->currentPage(),
             'last_page'     => $data->lastPage(),
             'per_page'      => $data->perPage(),
@@ -75,10 +77,10 @@ class RoleService
                 return $role;
             });
 
-            return ResponseFormatter::success($role, 'Role created successfully.');
+            return $this->successResponse($role, 'Role created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create role: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to create role.');
+            return $this->errorResponse('Failed to create role.');
         }
     }
 
@@ -100,12 +102,12 @@ class RoleService
                 $role->syncPermissions($data['permissions']);
             });
 
-            return ResponseFormatter::success($role->fresh(), 'Role updated successfully.');
+            return $this->successResponse($role->fresh(), 'Role updated successfully.');
         } catch (ModelNotFoundException $e) {
-            return ResponseFormatter::error('Role not found.');
+            return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to update role: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to update role.');
+            return $this->errorResponse('Failed to update role.');
         }
     }
 
@@ -125,12 +127,12 @@ class RoleService
                 $role->delete();
             });
 
-            return ResponseFormatter::success(null, 'Role deleted successfully.');
+            return $this->successResponse(null, 'Role deleted successfully.');
         } catch (ModelNotFoundException $e) {
-            return ResponseFormatter::error('Role not found.');
+            return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to delete role: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to delete role.');
+            return $this->errorResponse('Failed to delete role.');
         }
     }
 }

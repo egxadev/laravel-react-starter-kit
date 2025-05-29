@@ -7,6 +7,8 @@ use App\Traits\ResponseFormatter;
 
 class PermissionService
 {
+    use ResponseFormatter;
+
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
@@ -40,7 +42,7 @@ class PermissionService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return ResponseFormatter::paginated($data->items(), [
+        return $this->paginatedResponse($data->items(), [
             'current_page'  => $data->currentPage(),
             'last_page'     => $data->lastPage(),
             'per_page'      => $data->perPage(),

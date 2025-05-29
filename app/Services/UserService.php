@@ -8,6 +8,8 @@ use App\Traits\ResponseFormatter;
 
 class UserService
 {
+    use ResponseFormatter;
+
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
@@ -42,7 +44,7 @@ class UserService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return ResponseFormatter::paginated($data->items(), [
+        return $this->paginatedResponse($data->items(), [
             'current_page'  => $data->currentPage(),
             'last_page'     => $data->lastPage(),
             'per_page'      => $data->perPage(),
@@ -78,10 +80,10 @@ class UserService
                 return $user;
             });
 
-            return ResponseFormatter::success($user, 'User created successfully.');
+            return $this->successResponse($user, 'User created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create user: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to create user.');
+            return $this->errorResponse('Failed to create user.');
         }
     }
 
@@ -110,12 +112,12 @@ class UserService
                 $user->syncRoles($data['roles']);
             });
 
-            return ResponseFormatter::success($user->fresh(), 'User updated successfully.');
+            return $this->successResponse($user->fresh(), 'User updated successfully.');
         } catch (ModelNotFoundException $e) {
-            return ResponseFormatter::error('User not found.');
+            return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to update user: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to update user.');
+            return $this->errorResponse('Failed to update user.');
         }
     }
 
@@ -147,12 +149,12 @@ class UserService
                 ]);
             }
 
-            return ResponseFormatter::success(null, 'User deleted successfully.');
+            return $this->successResponse(null, 'User deleted successfully.');
         } catch (ModelNotFoundException $e) {
-            return ResponseFormatter::error('User not found.');
+            return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to delete user: ' . $e->getMessage());
-            return ResponseFormatter::error('Failed to delete user.');
+            return $this->errorResponse('Failed to delete user.');
         }
     }
 }
