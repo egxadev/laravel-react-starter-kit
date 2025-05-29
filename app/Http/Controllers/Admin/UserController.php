@@ -118,6 +118,10 @@ class UserController extends Controller
     {
         $response = $this->userService->deleteUser($id);
 
+        if (isset($response['redirect'])) {
+            return redirect()->route($response['redirect'])->with('success', $response['message']);
+        }
+
         if ($response['success']) {
             return redirect()->route('users.index')->with('success', $response['message']);
         } else {

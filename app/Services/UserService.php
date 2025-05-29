@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Traits\ResponseFormatter;
 
 class UserService
 {
@@ -41,22 +42,18 @@ class UserService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return [
-            'data'  => $data->items(),
-            'meta'  => [
-                'current_page'  => $data->currentPage(),
-                'last_page'     => $data->lastPage(),
-                'per_page'      => $data->perPage(),
-                'total'         => $data->total(),
-                'from'          => $data->firstItem(),
-                'to'            => $data->lastItem(),
-            ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ]
-        ];
+        return ResponseFormatter::paginated($data->items(), [
+            'current_page'  => $data->currentPage(),
+            'last_page'     => $data->lastPage(),
+            'per_page'      => $data->perPage(),
+            'total'         => $data->total(),
+            'from'          => $data->firstItem(),
+            'to'            => $data->lastItem(),
+        ], [
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir,
+        ]);
     }
 
     /**
@@ -81,17 +78,10 @@ class UserService
                 return $user;
             });
 
-            return [
-                'success'   => true,
-                'message'   => 'User created successfully.',
-                'user'      => $user,
-            ];
+            return ResponseFormatter::success($user, 'User created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create user: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to create user.',
-            ];
+            return ResponseFormatter::error('Failed to create user.');
         }
     }
 
@@ -120,22 +110,12 @@ class UserService
                 $user->syncRoles($data['roles']);
             });
 
-            return [
-                'success'   => true,
-                'message'   => 'User updated successfully.',
-                'data'      => $user->fresh(),
-            ];
+            return ResponseFormatter::success($user->fresh(), 'User updated successfully.');
         } catch (ModelNotFoundException $e) {
-            return [
-                'success'   => false,
-                'message'   => 'User not found.',
-            ];
+            return ResponseFormatter::error('User not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to update user: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to update user.',
-            ];
+            return ResponseFormatter::error('Failed to update user.');
         }
     }
 
@@ -149,27 +129,30 @@ class UserService
     {
         try {
             $user = User::findOrFail($id);
+            $currentUser = auth()->user();
+            $isSelfDelete = $user->id === $currentUser->id;
 
-            return \DB::transaction(function () use ($user) {
-                $user->update(['deleted_by' => auth()->id()]);
+            \DB::transaction(function () use ($user, $currentUser) {
+                $user->update(['deleted_by' => $currentUser->id]);
                 $user->delete();
-
-                return [
-                    'success'   => true,
-                    'message'   => 'User deleted successfully.'
-                ];
             });
+
+            if ($isSelfDelete) {
+                auth()->logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                
+                return ResponseFormatter::success(null, 'Your account has been deleted successfully.', [
+                    'redirect' => route('login')
+                ]);
+            }
+
+            return ResponseFormatter::success(null, 'User deleted successfully.');
         } catch (ModelNotFoundException $e) {
-            return [
-                'success'   => false,
-                'message'   => 'User not found.'
-            ];
+            return ResponseFormatter::error('User not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to delete user: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to delete user.'
-            ];
+            return ResponseFormatter::error('Failed to delete user.');
         }
     }
 }

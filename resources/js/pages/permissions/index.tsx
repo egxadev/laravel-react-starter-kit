@@ -30,9 +30,9 @@ import * as React from 'react';
 import { columns } from './partials/data-table';
 
 export default function PermissionIndex() {
-    const { breadcrumbs, permissions, meta, filters } = usePage<{
+    const { breadcrumbs, data, meta, filters } = usePage<{
         breadcrumbs: BreadcrumbItem[];
-        permissions: Permission[];
+        data: Permission[];
         meta: {
             current_page: number;
             last_page: number;
@@ -101,7 +101,7 @@ export default function PermissionIndex() {
     }, []);
 
     const table = useReactTable({
-        data: permissions,
+        data: data,
         columns,
         manualPagination: true,
         manualSorting: true,

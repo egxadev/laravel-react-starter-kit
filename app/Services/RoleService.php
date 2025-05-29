@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Traits\ResponseFormatter;
 
 class RoleService
 {
@@ -41,22 +42,18 @@ class RoleService
 
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
-        return [
-            'data'  => $data->items(),
-            'meta'  => [
-                'current_page'  => $data->currentPage(),
-                'last_page'     => $data->lastPage(),
-                'per_page'      => $data->perPage(),
-                'total'         => $data->total(),
-                'from'          => $data->firstItem(),
-                'to'            => $data->lastItem(),
-            ],
-            'filters' => [
-                'search' => $search,
-                'sort_by' => $sortBy,
-                'sort_dir' => $sortDir,
-            ]
-        ];
+        return ResponseFormatter::paginated($data->items(), [
+            'current_page'  => $data->currentPage(),
+            'last_page'     => $data->lastPage(),
+            'per_page'      => $data->perPage(),
+            'total'         => $data->total(),
+            'from'          => $data->firstItem(),
+            'to'            => $data->lastItem(),
+        ], [
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir,
+        ]);
     }
 
     /**
@@ -78,17 +75,10 @@ class RoleService
                 return $role;
             });
 
-            return [
-                'success'   => true,
-                'message'   => 'Role created successfully.',
-                'role'      => $role,
-            ];
+            return ResponseFormatter::success($role, 'Role created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create role: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to create role.',
-            ];
+            return ResponseFormatter::error('Failed to create role.');
         }
     }
 
@@ -110,22 +100,12 @@ class RoleService
                 $role->syncPermissions($data['permissions']);
             });
 
-            return [
-                'success'   => true,
-                'message'   => 'Role updated successfully.',
-                'data'      => $role->fresh(),
-            ];
+            return ResponseFormatter::success($role->fresh(), 'Role updated successfully.');
         } catch (ModelNotFoundException $e) {
-            return [
-                'success'   => false,
-                'message'   => 'Role not found.',
-            ];
+            return ResponseFormatter::error('Role not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to update role: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to update role.',
-            ];
+            return ResponseFormatter::error('Failed to update role.');
         }
     }
 
@@ -140,26 +120,17 @@ class RoleService
         try {
             $role = Role::findOrFail($id);
 
-            return \DB::transaction(function () use ($role) {
+            \DB::transaction(function () use ($role) {
                 $role->update(['deleted_by' => auth()->id()]);
                 $role->delete();
-
-                return [
-                    'success'   => true,
-                    'message'   => 'Role deleted successfully.'
-                ];
             });
+
+            return ResponseFormatter::success(null, 'Role deleted successfully.');
         } catch (ModelNotFoundException $e) {
-            return [
-                'success'   => false,
-                'message'   => 'Role not found.'
-            ];
+            return ResponseFormatter::error('Role not found.');
         } catch (\Exception $e) {
             \Log::error('Failed to delete role: ' . $e->getMessage());
-            return [
-                'success'   => false,
-                'message'   => 'Failed to delete role.'
-            ];
+            return ResponseFormatter::error('Failed to delete role.');
         }
     }
 }
