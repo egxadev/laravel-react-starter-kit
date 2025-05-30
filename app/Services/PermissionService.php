@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Spatie\Permission\Models\Permission;
 use App\Traits\ResponseFormatter;
+use Spatie\Permission\Models\Permission;
 
 class PermissionService
 {
@@ -12,7 +12,7 @@ class PermissionService
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
-    private const FILTERABLE_COLUMNS = ['id', 'name', 'created_at'];
+    private const FILTERABLE_COLUMNS = ['name', 'created_at'];
 
     /**
      * Get paginated permissions with filters.
@@ -50,9 +50,9 @@ class PermissionService
             'from'          => $data->firstItem(),
             'to'            => $data->lastItem(),
         ], [
-            'search' => $search,
-            'sort_by' => $sortBy,
-            'sort_dir' => $sortDir,
+            'search'        => $search,
+            'sort_by'       => $sortBy,
+            'sort_dir'      => $sortDir,
         ]);
     }
 }
