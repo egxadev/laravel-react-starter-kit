@@ -38,6 +38,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                         <DropdownMenuTrigger asChild>
                                             <SidebarMenuButton
                                                 isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(href)))}
+                                                tooltip={{ children: item.title }}
                                             >
                                                 {item.icon && <item.icon />}
                                                 <span>{item.title}</span>
@@ -91,7 +92,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             )
                         ) : (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={page.url.startsWith(item.href)}>
+                                <SidebarMenuButton asChild isActive={page.url.startsWith(item.href)} tooltip={{ children: item.title }}>
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>

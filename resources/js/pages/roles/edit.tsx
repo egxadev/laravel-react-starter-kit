@@ -15,7 +15,7 @@ export default function RoleEdit({
     role: Role;
     permissions: Permission[];
 }>) {
-    console.log(role);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={breadcrumbs[0].title} />

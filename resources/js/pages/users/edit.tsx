@@ -15,7 +15,7 @@ export default function UserEdit({
     user: User;
     roles: Role[];
 }>) {
-    console.log(user);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={breadcrumbs[0].title} />
