@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Traits\ResponseFormatter;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Traits\ResponseFormatter;
 
 class RoleService
 {
@@ -13,7 +13,7 @@ class RoleService
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
-    private const FILTERABLE_COLUMNS = ['id', 'name', 'created_at'];
+    private const FILTERABLE_COLUMNS = ['name', 'created_at'];
 
     /**
      * Get paginated roles with filters.
@@ -52,9 +52,9 @@ class RoleService
             'from'          => $data->firstItem(),
             'to'            => $data->lastItem(),
         ], [
-            'search' => $search,
-            'sort_by' => $sortBy,
-            'sort_dir' => $sortDir,
+            'search'        => $search,
+            'sort_by'       => $sortBy,
+            'sort_dir'      => $sortDir,
         ]);
     }
 
@@ -67,7 +67,7 @@ class RoleService
     public function createRole(array $data): array
     {
         try {
-            $role = \DB::transaction(function () use ($data) {
+            $createdData = \DB::transaction(function () use ($data) {
                 $role = Role::create([
                     'name'          => $data['name'],
                     'created_by'    => auth()->id()
@@ -77,7 +77,7 @@ class RoleService
                 return $role;
             });
 
-            return $this->successResponse($role, 'Role created successfully.');
+            return $this->successResponse($createdData, 'Role created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create role: ' . $e->getMessage());
             return $this->errorResponse('Failed to create role.');
@@ -94,15 +94,16 @@ class RoleService
     public function updateRole(Role $role, array $data): array
     {
         try {
-            \DB::transaction(function () use ($role, $data) {
+            $updatedData = \DB::transaction(function () use ($role, $data) {
                 $role->update([
                     'name'          => $data['name'],
                     'updated_by'    => auth()->id()
                 ]);
                 $role->syncPermissions($data['permissions']);
+                return $role;
             });
 
-            return $this->successResponse($role->fresh(), 'Role updated successfully.');
+            return $this->successResponse($updatedData, 'Role updated successfully.');
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {

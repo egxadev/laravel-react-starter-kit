@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Traits\ResponseFormatter;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserService
 {
@@ -13,7 +13,7 @@ class UserService
     private const DEFAULT_PER_PAGE = 10;
     private const DEFAULT_SORT_BY = 'name';
     private const DEFAULT_SORT_DIR = 'asc';
-    private const FILTERABLE_COLUMNS = ['id', 'name', 'email', 'created_at'];
+    private const FILTERABLE_COLUMNS = ['name', 'email', 'created_at'];
 
     /**
      * Get paginated users with filters.
@@ -52,9 +52,9 @@ class UserService
             'from'          => $data->firstItem(),
             'to'            => $data->lastItem(),
         ], [
-            'search' => $search,
-            'sort_by' => $sortBy,
-            'sort_dir' => $sortDir,
+            'search'        => $search,
+            'sort_by'       => $sortBy,
+            'sort_dir'      => $sortDir,
         ]);
     }
 
@@ -67,7 +67,7 @@ class UserService
     public function createUser(array $data): array
     {
         try {
-            $user = \DB::transaction(function () use ($data) {
+            $createdData = \DB::transaction(function () use ($data) {
                 $user = User::create([
                     'name'          => $data['name'],
                     'email'         => $data['email'],
@@ -80,7 +80,7 @@ class UserService
                 return $user;
             });
 
-            return $this->successResponse($user, 'User created successfully.');
+            return $this->successResponse($createdData, 'User created successfully.');
         } catch (\Exception $e) {
             \Log::error('Failed to create user: ' . $e->getMessage());
             return $this->errorResponse('Failed to create user.');
@@ -97,22 +97,23 @@ class UserService
     public function updateUser(User $user, array $data): array
     {
         try {
-            $updateData = [
-                'name'          => $data['name'],
-                'email'         => $data['email'],
-                'updated_by'    => auth()->id(),
-            ];
-
             if (!empty($data['password'])) {
-                $updateData['password'] = bcrypt($data['password']);
+                $data['password'] = bcrypt($data['password']);
             }
 
-            \DB::transaction(function () use ($user, $updateData, $data) {
-                $user->update($updateData);
+            $updatedData = \DB::transaction(function () use ($user, $data) {
+                $user->update([
+                    'name'          => $data['name'],
+                    'email'         => $data['email'],
+                    'password'      => $data['password'] ?? $user->password,
+                    'updated_by'    => auth()->id(),
+                ]);
                 $user->syncRoles($data['roles']);
-            });
 
-            return $this->successResponse($user->fresh(), 'User updated successfully.');
+                return $user;
+            });
+            
+            return $this->successResponse($updatedData, 'User updated successfully.');
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
@@ -143,8 +144,8 @@ class UserService
                 auth()->logout();
                 session()->invalidate();
                 session()->regenerateToken();
-                
-                return ResponseFormatter::success(null, 'Your account has been deleted successfully.', [
+
+                return $this->successResponse(null, 'Your account has been deleted successfully.', [
                     'redirect' => route('login')
                 ]);
             }
