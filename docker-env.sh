@@ -57,6 +57,12 @@ case "$1" in
         
         echo "Installing composer dependencies..."
         docker-compose -f docker-compose.prod.yml exec app composer install --no-dev --optimize-autoloader
+
+        echo "Installing npm dependencies..."
+        docker-compose -f docker-compose.prod.yml exec app npm install
+        
+        echo "Building frontend assets..."
+        docker-compose -f docker-compose.prod.yml exec app npm run build
         
         echo "Generating application key..."
         docker-compose -f docker-compose.prod.yml exec app php artisan key:generate

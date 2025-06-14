@@ -21,7 +21,7 @@ services:
     container_name: laravel-react-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8000:80"
     volumes:
       - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
