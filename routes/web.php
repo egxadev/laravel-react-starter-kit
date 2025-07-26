@@ -31,6 +31,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // users
     Route::resource('/users', UserController::class)
         ->middleware('permission:users.index|users.create|users.edit|users.delete');
+    Route::patch('/users/{id}/restore', [UserController::class, 'restore'])
+        ->name('users.restore')
+        ->middleware('permission:users.delete');
+
+    Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])
+        ->name('users.force-delete')
+        ->middleware('permission:users.delete');
 });
 
 require __DIR__ . '/settings.php';
