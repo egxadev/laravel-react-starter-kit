@@ -14,23 +14,21 @@ class UserTableSeeder extends Seeder
      */
     public function run(): void
     {
-        //create user
         $user = User::create([
             'name'      => 'Administrator',
             'email'     => 'admin@gmail.com',
             'password'  => bcrypt('password'),
         ]);
 
-        //get all permissions
-        $permissions = Permission::all();
+        $permissions = Permission::whereNotIn('name', function ($query) {
+            $query->select('name')
+                ->from('permissions')
+                ->where('name', 'like', 'users.%');
+        })->get();
 
-        //get role admin
         $role = Role::where('name', 'admin')->first();
 
-        //assign permission to role
         $role->syncPermissions($permissions);
-
-        //assign role to user
         $user->assignRole($role);
     }
 }
