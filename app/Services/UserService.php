@@ -29,8 +29,9 @@ class UserService
         $sortDir = in_array($dir = strtolower($filters['sort_dir'] ?? self::DEFAULT_SORT_DIR), ['asc', 'desc']) ? $dir : self::DEFAULT_SORT_DIR;
 
         $search = trim($filters['search'] ?? '');
+        $trashed = filter_var($filters['trashed'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-        $query = User::query();
+        $query = $trashed ? User::onlyTrashed() : User::query();
 
         $query->when($search, function ($query) use ($search) {
             $query->where(function ($subQuery) use ($search) {
@@ -55,6 +56,7 @@ class UserService
             'search'        => $search,
             'sort_by'       => $sortBy,
             'sort_dir'      => $sortDir,
+            'trashed'       => $trashed,
         ]);
     }
 
@@ -112,7 +114,7 @@ class UserService
 
                 return $user;
             });
-            
+
             return $this->successResponse($updatedData, 'User updated successfully.');
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
@@ -156,6 +158,55 @@ class UserService
         } catch (\Exception $e) {
             \Log::error('Failed to delete user: ' . $e->getMessage());
             return $this->errorResponse('Failed to delete user.');
+        }
+    }
+
+    /**
+     * Restore user by ID.
+     *
+     * @param string $id
+     * @return array
+     */
+    public function restoreUser(string $id): array
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($id);
+
+            \DB::transaction(function () use ($user) {
+                $user->restore();
+                $user->update(['deleted_by' => null]);
+            });
+
+            return $this->successResponse(null, 'User restored successfully.');
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('User not found.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to restore user: ' . $e->getMessage());
+            return $this->errorResponse('Failed to restore user.');
+        }
+    }
+
+    /**
+     * Force delete user by ID.
+     *
+     * @param string $id
+     * @return array
+     */
+    public function forceDeleteUser(string $id): array
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($id);
+
+            \DB::transaction(function () use ($user) {
+                $user->forceDelete();
+            });
+
+            return $this->successResponse(null, 'User permanently deleted successfully.');
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('User not found.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to force delete user: ' . $e->getMessage());
+            return $this->errorResponse('Failed to permanently delete user.');
         }
     }
 }

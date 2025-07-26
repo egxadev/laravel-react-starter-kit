@@ -128,4 +128,32 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('error', $response['message']);
         }
     }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(string $id)
+    {
+        $response = $this->userService->restoreUser($id);
+
+        if ($response['success']) {
+            return redirect()->route('users.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('users.index')->with('error', $response['message']);
+        }
+    }
+
+    /**
+     * Force delete the specified resource from storage.
+     */
+    public function forceDelete(string $id)
+    {
+        $response = $this->userService->forceDeleteUser($id);
+
+        if ($response['success']) {
+            return redirect()->route('users.index')->with('success', $response['message']);
+        } else {
+            return redirect()->route('users.index')->with('error', $response['message']);
+        }
+    }
 }
