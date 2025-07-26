@@ -32,9 +32,5 @@ class PermissionsTableSeeder extends Seeder
 
         //permission permissions
         Permission::create(['name' => 'permissions.index', 'guard_name' => 'web']);
-
-        for ($i = 0; $i < 1000; $i++) {
-            Permission::create(['name' => 'permissions.index' . $i, 'guard_name' => 'web']);
-        }
     }
 }
