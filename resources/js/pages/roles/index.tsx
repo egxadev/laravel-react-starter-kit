@@ -1,11 +1,12 @@
 import { DataTablePagination } from '@/components/data-table-pagination';
 import { Button } from '@/components/ui/button';
+import { index as indexRoles, create as createRoles } from '@/routes/roles';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Role } from '@/types/role';
+import { type Role } from '@/types/role';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     SortingState,
@@ -96,7 +97,7 @@ export default function RoleIndex() {
     // Handle server-side operations
     const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
         router.get(
-            route('roles.index'),
+            indexRoles(),
             {
                 ...filters,
                 ...params,
@@ -174,7 +175,7 @@ export default function RoleIndex() {
                                     })}
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Link className="w-full sm:w-auto" href={route('roles.create')}>
+                        <Link className="w-full sm:w-auto" href={createRoles()}>
                             <Button className="w-full sm:w-auto">Add Role</Button>
                         </Link>
                     </div>

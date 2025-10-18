@@ -18,8 +18,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { edit as editRoles } from '@/routes/roles';
 import hasAnyPermission from '@/lib/utils';
-import { Role } from '@/types/role';
+import { type Role } from '@/types/role';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
@@ -78,7 +79,7 @@ const ActionCell = ({ data }: { data: Role }) => {
                 <DropdownMenuSeparator />
 
                 {hasAnyPermission(['roles.edit']) && (
-                    <Link href={route('roles.edit', data.id)}>
+                    <Link href={editRoles({ role: data.id })}>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                     </Link>
                 )}

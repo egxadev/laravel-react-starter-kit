@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Permission } from '@/types/permission';
+import { type Permission } from '@/types/permission';
 import { Head, router, usePage } from '@inertiajs/react';
 import {
     SortingState,
@@ -20,6 +20,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
 import { columns } from './partials/data-table';
+import { index as indexPermissions } from '@/routes/permissions';
 
 export default function PermissionIndex() {
     const { breadcrumbs, data, meta, filters } = usePage<{
@@ -49,7 +50,7 @@ export default function PermissionIndex() {
     // Handle server-side operations
     const handleServerOperation = (params: { page?: number; per_page?: number; sort_by?: string; sort_dir?: string; search?: string }) => {
         router.get(
-            route('permissions.index'),
+            indexPermissions(),
             {
                 ...filters,
                 ...params,
