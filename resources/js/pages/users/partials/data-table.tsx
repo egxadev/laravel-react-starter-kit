@@ -18,8 +18,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { destroy as destroyUsers, edit as editUsers, forceDelete as forceDeleteUsers, restore as restoreUsers } from '@/routes/users';
 import hasAnyPermission from '@/lib/utils';
-import { User } from '@/types/user';
+import { type User } from '@/types/user';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
@@ -64,7 +65,7 @@ const ActionCell = ({ data, isTrashed = false }: { data: User; isTrashed?: boole
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     function handleDelete() {
-        router.delete(route('users.destroy', data.id), {
+        router.delete(destroyUsers({ user: data.id }), {
             preserveState: false,
             preserveScroll: true,
             onSuccess: () => {
@@ -80,7 +81,7 @@ const ActionCell = ({ data, isTrashed = false }: { data: User; isTrashed?: boole
 
     function handleRestore() {
         router.patch(
-            route('users.restore', data.id),
+            restoreUsers({ id: data.id }),
             {},
             {
                 preserveState: false,
@@ -98,7 +99,7 @@ const ActionCell = ({ data, isTrashed = false }: { data: User; isTrashed?: boole
     }
 
     function handleForceDelete() {
-        router.delete(route('users.force-delete', data.id), {
+        router.delete(forceDeleteUsers({ id: data.id }), {
             preserveState: false,
             preserveScroll: true,
             onSuccess: () => {
@@ -127,7 +128,7 @@ const ActionCell = ({ data, isTrashed = false }: { data: User; isTrashed?: boole
                 {!isTrashed ? (
                     <>
                         {hasAnyPermission(['users.edit']) && (
-                            <Link href={route('users.edit', data.id)}>
+                            <Link href={editUsers({ user: data.id })}>
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                             </Link>
                         )}

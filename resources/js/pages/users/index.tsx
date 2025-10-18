@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { User } from '@/types/user';
+import { type User } from '@/types/user';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     SortingState,
@@ -21,6 +21,7 @@ import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { columns } from './partials/data-table';
+import { index as indexUsers, create as createUsers } from '@/routes/users';
 
 export default function UserIndex() {
     const { breadcrumbs, data, meta, filters, flash } = usePage<{
@@ -105,7 +106,7 @@ export default function UserIndex() {
         trashed?: boolean;
     }) => {
         router.get(
-            route('users.index'),
+            indexUsers(),
             {
                 ...filters,
                 ...params,
@@ -207,7 +208,7 @@ export default function UserIndex() {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Link className="w-full sm:w-auto" href={route('users.create')}>
+                        <Link className="w-full sm:w-auto" href={createUsers()}>
                             <Button className="w-full sm:w-auto">Add User</Button>
                         </Link>
                     </div>

@@ -1,5 +1,5 @@
+import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
-import type { Config } from 'ziggy-js';
 import { User } from './user';
 
 export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> extends T {
@@ -25,7 +25,7 @@ export interface NavGroup {
 
 export interface NavItem {
     title: string;
-    href: string;
+    href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
     permission?: string[];
@@ -36,7 +36,6 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
-    ziggy: Config & { location: string };
     sidebarOpen: boolean;
     [key: string]: unknown;
 }

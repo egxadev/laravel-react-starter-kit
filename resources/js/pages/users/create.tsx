@@ -1,7 +1,7 @@
 import Heading from '@/components/heading';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, PageProps } from '@/types';
-import { Role } from '@/types/role';
+import { type BreadcrumbItem, type PageProps } from '@/types';
+import { type Role } from '@/types/role';
 import { Head } from '@inertiajs/react';
 import { UserForm } from './partials/form';
 
