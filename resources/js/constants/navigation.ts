@@ -5,6 +5,9 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
+import { index as indexPermissions } from '@/routes/permissions';
+import { index as indexRoles } from '@/routes/roles';
+import { index as indexUsers } from '@/routes/users';
 
 export const mainNavItems: NavItem[] = [
     {
@@ -15,19 +18,19 @@ export const mainNavItems: NavItem[] = [
     },
     {
         title: 'Permission',
-        href: '/permissions',
+        href: indexPermissions(),
         icon: KeyRound,
         permission: ['permissions.index'],
     },
     {
         title: 'Role',
-        href: '/roles',
+        href: indexRoles(),
         icon: UserRoundCog,
         permission: ['roles.index'],
     },
     {
         title: 'User',
-        href: '/users',
+        href: indexUsers(),
         icon: UsersRound,
         permission: ['users.index'],
     },
