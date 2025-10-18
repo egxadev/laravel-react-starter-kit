@@ -37,7 +37,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <SidebarMenuButton
-                                                isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(href)))}
+                                                isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(typeof href === 'string' ? href : href.url)))}
                                                 tooltip={{ children: item.title }}
                                             >
                                                 {item.icon && <item.icon />}
@@ -78,7 +78,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuSub>
                                                 {item.items?.map((subItem) => (
                                                     <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton asChild isActive={page.url.startsWith(subItem.href)}>
+                                                        <SidebarMenuSubButton asChild isActive={page.url.startsWith(typeof subItem.href === 'string' ? subItem.href : subItem.href.url)}>
                                                             <Link href={subItem.href} prefetch>
                                                                 <span>{subItem.title}</span>
                                                             </Link>
@@ -92,7 +92,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             )
                         ) : (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={page.url.startsWith(item.href)} tooltip={{ children: item.title }}>
+                                <SidebarMenuButton asChild isActive={page.url.startsWith(typeof item.href === 'string' ? item.href : item.href.url)} tooltip={{ children: item.title }}>
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
