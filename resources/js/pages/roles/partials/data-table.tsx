@@ -19,7 +19,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { edit as editRoles } from '@/routes/roles';
-import hasAnyPermission from '@/lib/utils';
+import { hasAnyPermission } from '@/lib/utils';
 import { type Role } from '@/types/role';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
