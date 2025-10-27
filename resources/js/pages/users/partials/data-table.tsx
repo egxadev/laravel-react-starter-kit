@@ -19,7 +19,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { destroy as destroyUsers, edit as editUsers, forceDelete as forceDeleteUsers, restore as restoreUsers } from '@/routes/users';
-import hasAnyPermission from '@/lib/utils';
+import { hasAnyPermission } from '@/lib/utils';
 import { type User } from '@/types/user';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';

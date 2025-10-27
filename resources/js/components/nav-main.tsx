@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
-import hasAnyPermission from '@/lib/utils';
+import { resolveUrl, hasAnyPermission } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
@@ -37,7 +37,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <SidebarMenuButton
-                                                isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(typeof href === 'string' ? href : href.url)))}
+                                                isActive={items.some(({ items }) => items?.some(({ href }) => page.url.startsWith(resolveUrl(href))))}
                                                 tooltip={{ children: item.title }}
                                             >
                                                 {item.icon && <item.icon />}
@@ -63,7 +63,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 <Collapsible
                                     key={item.title}
                                     asChild
-                                    defaultOpen={item.items?.some(subItem => subItem.href === path)}
+                                    defaultOpen={item.items?.some(subItem => page.url.startsWith(resolveUrl(subItem.href)))}
                                     className="group/collapsible"
                                 >
                                     <SidebarMenuItem>
@@ -78,7 +78,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuSub>
                                                 {item.items?.map((subItem) => (
                                                     <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton asChild isActive={page.url.startsWith(typeof subItem.href === 'string' ? subItem.href : subItem.href.url)}>
+                                                        <SidebarMenuSubButton asChild isActive={page.url.startsWith(resolveUrl(subItem.href))}>
                                                             <Link href={subItem.href} prefetch>
                                                                 <span>{subItem.title}</span>
                                                             </Link>
@@ -92,7 +92,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             )
                         ) : (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={page.url.startsWith(typeof item.href === 'string' ? item.href : item.href.url)} tooltip={{ children: item.title }}>
+                                <SidebarMenuButton asChild isActive={page.url.startsWith(resolveUrl(item.href))} tooltip={{ children: item.title }}>
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>

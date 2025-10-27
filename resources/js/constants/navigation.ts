@@ -2,7 +2,7 @@ import { type NavItem } from '@/types';
 import { BookOpen, Folder, KeyRound, LayoutGrid, Rocket, UserRoundCog, UsersRound } from 'lucide-react';
 import { index as indexDashboard } from '@/routes/dashboard';
 import { edit as editAppearance } from '@/routes/appearance';
-import { edit as editPassword } from '@/routes/password';
+import { edit as editPassword } from '@/routes/user-password';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { index as indexPermissions } from '@/routes/permissions';
