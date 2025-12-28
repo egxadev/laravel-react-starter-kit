@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Traits\ResponseFormatter;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class RoleService
@@ -67,7 +69,7 @@ class RoleService
     public function createRole(array $data): array
     {
         try {
-            $createdData = \DB::transaction(function () use ($data) {
+            $createdData = DB::transaction(function () use ($data) {
                 $role = Role::create([
                     'name'          => $data['name'],
                     'created_by'    => auth()->id()
@@ -79,7 +81,7 @@ class RoleService
 
             return $this->successResponse($createdData, 'Role created successfully.');
         } catch (\Exception $e) {
-            \Log::error('Failed to create role: ' . $e->getMessage());
+            Log::error('Failed to create role: ' . $e->getMessage());
             return $this->errorResponse('Failed to create role.');
         }
     }
@@ -94,7 +96,7 @@ class RoleService
     public function updateRole(Role $role, array $data): array
     {
         try {
-            $updatedData = \DB::transaction(function () use ($role, $data) {
+            $updatedData = DB::transaction(function () use ($role, $data) {
                 $role->update([
                     'name'          => $data['name'],
                     'updated_by'    => auth()->id()
@@ -107,7 +109,7 @@ class RoleService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to update role: ' . $e->getMessage());
+            Log::error('Failed to update role: ' . $e->getMessage());
             return $this->errorResponse('Failed to update role.');
         }
     }
@@ -123,7 +125,7 @@ class RoleService
         try {
             $role = Role::findOrFail($id);
 
-            \DB::transaction(function () use ($role) {
+            DB::transaction(function () use ($role) {
                 $role->update(['deleted_by' => auth()->id()]);
                 $role->delete();
             });
@@ -132,7 +134,7 @@ class RoleService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to delete role: ' . $e->getMessage());
+            Log::error('Failed to delete role: ' . $e->getMessage());
             return $this->errorResponse('Failed to delete role.');
         }
     }

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Traits\ResponseFormatter;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserService
@@ -69,7 +71,7 @@ class UserService
     public function createUser(array $data): array
     {
         try {
-            $createdData = \DB::transaction(function () use ($data) {
+            $createdData = DB::transaction(function () use ($data) {
                 $user = User::create([
                     'name'          => $data['name'],
                     'email'         => $data['email'],
@@ -84,7 +86,7 @@ class UserService
 
             return $this->successResponse($createdData, 'User created successfully.');
         } catch (\Exception $e) {
-            \Log::error('Failed to create user: ' . $e->getMessage());
+            Log::error('Failed to create user: ' . $e->getMessage());
             return $this->errorResponse('Failed to create user.');
         }
     }
@@ -103,7 +105,7 @@ class UserService
                 $data['password'] = bcrypt($data['password']);
             }
 
-            $updatedData = \DB::transaction(function () use ($user, $data) {
+            $updatedData = DB::transaction(function () use ($user, $data) {
                 $user->update([
                     'name'          => $data['name'],
                     'email'         => $data['email'],
@@ -119,7 +121,7 @@ class UserService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to update user: ' . $e->getMessage());
+            Log::error('Failed to update user: ' . $e->getMessage());
             return $this->errorResponse('Failed to update user.');
         }
     }
@@ -137,7 +139,7 @@ class UserService
             $currentUser = auth()->user();
             $isSelfDelete = $user->id === $currentUser->id;
 
-            \DB::transaction(function () use ($user, $currentUser) {
+            DB::transaction(function () use ($user, $currentUser) {
                 $user->update(['deleted_by' => $currentUser->id]);
                 $user->delete();
             });
@@ -156,7 +158,7 @@ class UserService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to delete user: ' . $e->getMessage());
+            Log::error('Failed to delete user: ' . $e->getMessage());
             return $this->errorResponse('Failed to delete user.');
         }
     }
@@ -172,7 +174,7 @@ class UserService
         try {
             $user = User::onlyTrashed()->findOrFail($id);
 
-            \DB::transaction(function () use ($user) {
+            DB::transaction(function () use ($user) {
                 $user->restore();
                 $user->update(['deleted_by' => null]);
             });
@@ -181,7 +183,7 @@ class UserService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to restore user: ' . $e->getMessage());
+            Log::error('Failed to restore user: ' . $e->getMessage());
             return $this->errorResponse('Failed to restore user.');
         }
     }
@@ -197,7 +199,7 @@ class UserService
         try {
             $user = User::onlyTrashed()->findOrFail($id);
 
-            \DB::transaction(function () use ($user) {
+            DB::transaction(function () use ($user) {
                 $user->forceDelete();
             });
 
@@ -205,7 +207,7 @@ class UserService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('User not found.');
         } catch (\Exception $e) {
-            \Log::error('Failed to force delete user: ' . $e->getMessage());
+            Log::error('Failed to force delete user: ' . $e->getMessage());
             return $this->errorResponse('Failed to permanently delete user.');
         }
     }

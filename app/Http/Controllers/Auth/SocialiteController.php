@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use App\Models\User;
 use App\Models\SocialAccount;
 use App\Http\Controllers\Controller;

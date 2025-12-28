@@ -32,5 +32,7 @@ class UserRequest extends FormRequest
                 'roles'    => 'required|array'
             ];
         }
+
+        return [];
     }
 }

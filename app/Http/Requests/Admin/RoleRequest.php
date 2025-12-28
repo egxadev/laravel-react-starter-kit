@@ -28,5 +28,7 @@ class RoleRequest extends FormRequest
                 'permissions'   => 'required',
             ];
         }
+
+        return [];
     }
 }
