@@ -7,6 +7,8 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PER_PAGE_OPTIONS } from '@/constants/pagination';
 
 interface PaginationMeta {
     current_page: number;
@@ -20,12 +22,34 @@ interface PaginationMeta {
 interface DataTablePaginationProps {
     meta: PaginationMeta;
     onPageChange: (page: number) => void;
+    onPerPageChange?: (perPage: number) => void;
 }
 
-export function DataTablePagination({ meta, onPageChange }: DataTablePaginationProps) {
+export function DataTablePagination({ meta, onPageChange, onPerPageChange }: DataTablePaginationProps) {
     return (
         <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-            <div className="text-center sm:text-left">
+            {onPerPageChange && (
+                <div className="flex items-center gap-2 text-sm justify-center">
+                    <span className="text-muted-foreground">Show:</span>
+                    <Select
+                        value={meta.per_page.toString()}
+                        onValueChange={(value) => onPerPageChange(parseInt(value))}
+                    >
+                        <SelectTrigger className="w-20">
+                            <SelectValue />
+                        </SelectTrigger>
+                            <SelectContent>
+                                {PER_PAGE_OPTIONS.map((option) => (
+                                    <SelectItem key={option} value={option.toString()}>
+                                        {option}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                    </Select>
+                    <span className="text-muted-foreground">entries</span>
+                </div>
+            )}
+            <div className="text-center">
                 <div className="text-sm text-muted-foreground">
                     Showing {meta.from} to {meta.to} of {meta.total} entries.
                 </div>

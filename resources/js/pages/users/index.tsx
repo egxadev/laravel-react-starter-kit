@@ -251,7 +251,11 @@ export default function UserIndex() {
                     </Table>
                 </div>
 
-                <DataTablePagination meta={meta} onPageChange={(page) => handleServerOperation({ page })} />
+                <DataTablePagination
+                    meta={meta}
+                    onPageChange={(page) => handleServerOperation({ page })}
+                    onPerPageChange={(perPage) => handleServerOperation({ per_page: perPage, page: 1 })}
+                />
             </div>
         </AppLayout>
     );
