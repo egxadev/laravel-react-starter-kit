@@ -16,8 +16,10 @@ Route::get('/', function () {
 })->name('home');
 
 // socialite auth
-Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
-Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+Route::middleware('sso')->group(function () {
+    Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
+    Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

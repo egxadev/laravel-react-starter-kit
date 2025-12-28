@@ -47,4 +47,16 @@ return [
         'redirect' => env('GOOGLE_CLIENT_REDIRECT'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | SSO Settings
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether SSO (Single Sign-On) buttons are displayed
+    | on the login and register pages. Set to false to hide SSO options.
+    |
+    */
+
+    'sso_enabled' => env('SSO_ENABLED', false),
+
 ];

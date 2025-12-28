@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'permissions'   => $request->user() ? $request->user()->getPermissionArray() : []
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'ssoEnabled' => config('services.sso_enabled'),
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
