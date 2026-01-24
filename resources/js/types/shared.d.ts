@@ -1,12 +1,9 @@
-export type * from './auth';
-export type * from './navigation';
-export type * from './ui';
-
 import type { Auth } from './auth';
 
-export type SharedData = {
+export interface SharedData {
     name: string;
+    quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
     [key: string]: unknown;
-};
+}

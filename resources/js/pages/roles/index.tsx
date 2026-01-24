@@ -20,7 +20,7 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
-import { toast } from 'sonner';
+import { useFlashMessages } from '@/hooks/use-flash-messages';
 import { columns } from './partials/data-table';
 
 export default function RoleIndex() {
@@ -52,7 +52,6 @@ export default function RoleIndex() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [isInitialRender, setIsInitialRender] = React.useState(true);
-    const [flashStatus, setFlashStatus] = React.useState(false);
 
     // Reset initial render flag
     React.useEffect(() => {
@@ -60,15 +59,7 @@ export default function RoleIndex() {
     }, []);
 
     // Handle flash messages
-    React.useEffect(() => {
-        if (!flashStatus) {
-            if (flash.success) toast.success(flash.success);
-            if (flash.error) toast.error(flash.error);
-            if (flash.warning) toast.warning(flash.warning);
-            if (flash.info) toast.info(flash.info);
-            setFlashStatus(true);
-        }
-    }, [flash, flashStatus]);
+    useFlashMessages();
 
     // Debounce search input
     React.useEffect(() => {

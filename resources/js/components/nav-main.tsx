@@ -24,8 +24,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const { state } = useSidebar();
     const isMobile = useIsMobile();
     const cleanup = useMobileNavigation();
-    const path = page.url.split('?')[0];
-    const { isCurrentUrl } = useCurrentUrl();
+    const { isCurrentUrl, isActiveOrChild } = useCurrentUrl();
 
     return (
         <SidebarGroup>
@@ -39,7 +38,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <SidebarMenuButton
-                                                isActive={items.some(({ items }) => items?.some(({ href }) => isCurrentUrl(href)))}
+                                                isActive={isActiveOrChild(item.href) || item.items?.some((subItem: NavItem) => isCurrentUrl(subItem.href))}
                                                 tooltip={{ children: item.title }}
                                             >
                                                 {item.icon && <item.icon />}
@@ -65,12 +64,12 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 <Collapsible
                                     key={item.title}
                                     asChild
-                                    defaultOpen={item.items?.some(subItem => { isCurrentUrl(subItem.href)})}
+                                    defaultOpen={isActiveOrChild(item.href) || item.items?.some((subItem: NavItem) => isCurrentUrl(subItem.href))}
                                     className="group/collapsible"
                                 >
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton>
+                                            <SidebarMenuButton isActive={isActiveOrChild(item.href) || item.items?.some((subItem: NavItem) => isCurrentUrl(subItem.href))}>
                                                 {item.icon && <item.icon />}
                                                 <span>{item.title}</span>
                                                 <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -94,7 +93,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             )
                         ) : (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={isCurrentUrl(item.href)} tooltip={{ children: item.title }}>
+                                <SidebarMenuButton asChild isActive={isActiveOrChild(item.href)} tooltip={{ children: item.title }}>
                                     <Link href={item.href} prefetch>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
