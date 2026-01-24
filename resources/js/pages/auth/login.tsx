@@ -11,18 +11,19 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head, usePage } from '@inertiajs/react';
 
-interface LoginProps {
+type Props = {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
-}
+};
 
 export default function Login({
     status,
     canResetPassword,
     canRegister,
-}: LoginProps) {
+}: Props) {
     const { ssoEnabled } = usePage<{ ssoEnabled: boolean }>().props;
+
     return (
         <AuthLayout
             title="Log in to your account"

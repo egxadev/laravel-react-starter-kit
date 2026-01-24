@@ -1,7 +1,7 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { type User } from '@/types/user';
+import type { BreadcrumbItem } from '@/types';
+import type { User } from '@/types/user';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function DashboardIndex() {
