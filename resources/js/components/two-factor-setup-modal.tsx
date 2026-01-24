@@ -228,7 +228,7 @@ function TwoFactorVerificationStep({
     );
 }
 
-interface TwoFactorSetupModalProps {
+type Props = {
     isOpen: boolean;
     onClose: () => void;
     requiresConfirmation: boolean;
@@ -238,7 +238,7 @@ interface TwoFactorSetupModalProps {
     clearSetupData: () => void;
     fetchSetupData: () => Promise<void>;
     errors: string[];
-}
+};
 
 export default function TwoFactorSetupModal({
     isOpen,
@@ -250,7 +250,7 @@ export default function TwoFactorSetupModal({
     clearSetupData,
     fetchSetupData,
     errors,
-}: TwoFactorSetupModalProps) {
+}: Props) {
     const [showVerificationStep, setShowVerificationStep] =
         useState<boolean>(false);
 

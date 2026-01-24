@@ -1,5 +1,4 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { Icon } from '@/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,15 +26,19 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { UserMenuContent } from '@/components/user-menu-content';
+import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
-import { useActiveUrl } from '@/hooks/use-active-url';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
-import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
+import type { BreadcrumbItem, NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+
+type Props = {
+    breadcrumbs?: BreadcrumbItem[];
+};
 
 const mainNavItems: NavItem[] = [
     {
@@ -61,15 +64,11 @@ const rightNavItems: NavItem[] = [
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
-interface AppHeaderProps {
-    breadcrumbs?: BreadcrumbItem[];
-}
-
-export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
+export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();
-    const { urlIsActive } = useActiveUrl();
+    const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -106,10 +105,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     className="flex items-center space-x-2 font-medium"
                                                 >
                                                     {item.icon && (
-                                                        <Icon
-                                                            iconNode={item.icon}
-                                                            className="h-5 w-5"
-                                                        />
+                                                        <item.icon className="h-5 w-5" />
                                                     )}
                                                     <span>{item.title}</span>
                                                 </Link>
@@ -126,10 +122,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     className="flex items-center space-x-2 font-medium"
                                                 >
                                                     {item.icon && (
-                                                        <Icon
-                                                            iconNode={item.icon}
-                                                            className="h-5 w-5"
-                                                        />
+                                                        <item.icon className="h-5 w-5" />
                                                     )}
                                                     <span>{item.title}</span>
                                                 </a>
@@ -162,19 +155,19 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             href={item.href}
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
-                                                urlIsActive(item.href) && activeItemStyles,
+                                                whenCurrentUrl(
+                                                    item.href,
+                                                    activeItemStyles,
+                                                ),
                                                 'h-9 cursor-pointer px-3',
                                             )}
                                         >
                                             {item.icon && (
-                                                <Icon
-                                                    iconNode={item.icon}
-                                                    className="mr-2 h-4 w-4"
-                                                />
+                                                <item.icon className="mr-2 h-4 w-4" />
                                             )}
                                             {item.title}
                                         </Link>
-                                        {urlIsActive(item.href) && (
+                                        {isCurrentUrl(item.href) && (
                                             <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
                                         )}
                                     </NavigationMenuItem>
@@ -210,10 +203,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                         {item.title}
                                                     </span>
                                                     {item.icon && (
-                                                        <Icon
-                                                            iconNode={item.icon}
-                                                            className="size-5 opacity-80 group-hover:opacity-100"
-                                                        />
+                                                        <item.icon className="size-5 opacity-80 group-hover:opacity-100" />
                                                     )}
                                                 </a>
                                             </TooltipTrigger>
