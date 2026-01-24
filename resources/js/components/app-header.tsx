@@ -28,7 +28,7 @@ import {
 import { UserMenuContent } from '@/components/user-menu-content';
 import { footerNavItems, mainNavItems } from '@/constants/navigation';
 import { useInitials } from '@/hooks/use-initials';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type AppHeaderProps, type SharedData } from '@/types';
 import { index as indexDashboard } from '@/routes/dashboard';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
@@ -39,7 +39,7 @@ import AppLogoIcon from './app-logo-icon';
 
 const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
-export function AppHeader({ breadcrumbs = [] }: Props) {
+export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();

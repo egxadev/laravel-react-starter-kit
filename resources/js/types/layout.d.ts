@@ -6,6 +6,10 @@ export interface AppLayoutProps {
     breadcrumbs?: BreadcrumbItem[];
 }
 
+export interface AppHeaderProps {
+    breadcrumbs?: BreadcrumbItem[];
+}
+
 export interface AuthLayoutProps {
     children?: ReactNode;
     name?: string;
