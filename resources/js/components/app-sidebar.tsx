@@ -1,10 +1,11 @@
+import { Link } from '@inertiajs/react';
+import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { footerNavItems, mainNavItems } from '@/constants/navigation';
 import { index as indexDashboard } from '@/routes/dashboard';
-import { Link } from '@inertiajs/react';
 import AppLogo from './app-logo';
 
 export function AppSidebar() {

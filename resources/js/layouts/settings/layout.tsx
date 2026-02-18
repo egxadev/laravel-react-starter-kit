@@ -1,11 +1,11 @@
+import { Link } from '@inertiajs/react';
+import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { settingsNavItems } from '@/constants/navigation';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
-import { Link } from '@inertiajs/react';
-import type { PropsWithChildren } from 'react';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentUrl } = useCurrentUrl();
