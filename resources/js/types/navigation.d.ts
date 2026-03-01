@@ -3,8 +3,8 @@ import type { LucideIcon } from 'lucide-react';
 
 export interface BreadcrumbItem {
     title: string;
-    href: string;
-}
+    href: NonNullable<InertiaLinkProps['href']>;
+};
 
 export interface NavGroup {
     title: string;

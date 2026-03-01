@@ -5,6 +5,12 @@ import { toUrl } from '@/lib/utils';
 export type IsCurrentUrlFn = (
     urlToCheck: NonNullable<InertiaLinkProps['href']>,
     currentUrl?: string,
+    startsWith?: boolean,
+) => boolean;
+
+export type IsCurrentOrParentUrlFn = (
+    urlToCheck: NonNullable<InertiaLinkProps['href']>,
+    currentUrl?: string,
 ) => boolean;
 
 export type WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(
@@ -21,6 +27,7 @@ export type IsActiveOrChildFn = (
 export type UseCurrentUrlReturn = {
     currentUrl: string;
     isCurrentUrl: IsCurrentUrlFn;
+    isCurrentOrParentUrl: IsCurrentOrParentUrlFn;
     whenCurrentUrl: WhenCurrentUrlFn;
     isActiveOrChild: IsActiveOrChildFn;
 };
@@ -32,20 +39,31 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
     const isCurrentUrl: IsCurrentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
         currentUrl?: string,
+        startsWith: boolean = false,
     ) => {
         const urlToCompare = currentUrl ?? currentUrlPath;
         const urlString = toUrl(urlToCheck);
 
+        const comparePath = (path: string): boolean =>
+            startsWith ? urlToCompare.startsWith(path) : path === urlToCompare;
+
         if (!urlString.startsWith('http')) {
-            return urlString === urlToCompare;
+            return comparePath(urlString);
         }
 
         try {
             const absoluteUrl = new URL(urlString);
-            return absoluteUrl.pathname === urlToCompare;
+            return comparePath(absoluteUrl.pathname);
         } catch {
             return false;
         }
+    };
+
+    const isCurrentOrParentUrl: IsCurrentOrParentUrlFn = (
+        urlToCheck: NonNullable<InertiaLinkProps['href']>,
+        currentUrl?: string,
+    ) => {
+        return isCurrentUrl(urlToCheck, currentUrl, true);
     };
 
     const whenCurrentUrl: WhenCurrentUrlFn = <TIfTrue, TIfFalse = null>(
@@ -113,6 +131,7 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
     return {
         currentUrl: currentUrlPath,
         isCurrentUrl,
+        isCurrentOrParentUrl,
         whenCurrentUrl,
         isActiveOrChild,
     };
