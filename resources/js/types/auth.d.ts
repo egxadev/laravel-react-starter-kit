@@ -5,12 +5,12 @@ export interface Auth {
     user: User;
 }
 
-export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> extends T {
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     auth?: {
         user: User;
         permissions: string[];
     };
-}
+};
 
 /* @chisel-passkeys */
 export type Passkey = {
