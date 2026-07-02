@@ -1,5 +1,4 @@
 import Heading from '@/components/heading';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type PageProps } from '@/types';
 import { type Permission } from '@/types/permission';
 import { Head } from '@inertiajs/react';
@@ -13,7 +12,7 @@ export default function RoleCreate({
     permissions: Permission[];
 }>) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="w-full p-4">
@@ -23,6 +22,6 @@ export default function RoleCreate({
                     <RoleForm mode="create" permissions={permissions} className="max-w-xl" />
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

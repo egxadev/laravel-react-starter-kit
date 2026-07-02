@@ -3,17 +3,33 @@ import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { settingsNavItems } from '@/constants/navigation';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
+import { edit as editAppearance } from '@/routes/appearance';
+import { edit } from '@/routes/profile';
+import { edit as editSecurity } from '@/routes/security';
+import type { NavItem } from '@/types';
+
+const sidebarNavItems: NavItem[] = [
+    {
+        title: 'Profile',
+        href: edit(),
+        icon: null,
+    },
+    {
+        title: 'Security',
+        href: editSecurity(),
+        icon: null,
+    },
+    {
+        title: 'Appearance',
+        href: editAppearance(),
+        icon: null,
+    },
+];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
-
-    // When server-side rendering, we only render the layout on the client...
-    if (typeof window === 'undefined') {
-        return null;
-    }
 
     return (
         <div className="px-4 py-6">
@@ -24,8 +40,11 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
-                    <nav className="flex flex-col space-y-1 space-x-0">
-                        {settingsNavItems.map((item, index) => (
+                    <nav
+                        className="flex flex-col space-y-1 space-x-0"
+                        aria-label="Settings"
+                    >
+                        {sidebarNavItems.map((item, index) => (
                             <Button
                                 key={`${toUrl(item.href)}-${index}`}
                                 size="sm"

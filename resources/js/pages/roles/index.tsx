@@ -4,7 +4,6 @@ import { index as indexRoles, create as createRoles } from '@/routes/roles';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type Role } from '@/types/role';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -20,11 +19,10 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
-import { useFlashMessages } from '@/hooks/use-flash-messages';
 import { columns } from './partials/data-table';
 
 export default function RoleIndex() {
-    const { breadcrumbs, data, meta, filters, flash } = usePage<{
+    const { breadcrumbs, data, meta, filters } = usePage<{
         breadcrumbs: BreadcrumbItem[];
         data: Role[];
         meta: {
@@ -40,12 +38,6 @@ export default function RoleIndex() {
             sort_by: string;
             sort_dir: string;
         };
-        flash: {
-            success: string;
-            error: string;
-            warning: string;
-            info: string;
-        };
     }>().props;
     const [search, setSearch] = React.useState(filters.search);
     const [sorting, setSorting] = React.useState<SortingState>([{ id: filters.sort_by, desc: filters.sort_dir === 'desc' }]);
@@ -57,9 +49,6 @@ export default function RoleIndex() {
     React.useEffect(() => {
         setIsInitialRender(false);
     }, []);
-
-    // Handle flash messages
-    useFlashMessages();
 
     // Debounce search input
     React.useEffect(() => {
@@ -128,7 +117,7 @@ export default function RoleIndex() {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="w-full px-2 sm:px-4">
@@ -215,6 +204,6 @@ export default function RoleIndex() {
                     onPerPageChange={(perPage) => handleServerOperation({ per_page: perPage, page: 1 })}
                 />
             </div>
-        </AppLayout>
+        </>
     );
 }

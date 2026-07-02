@@ -1,4 +1,3 @@
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import {
@@ -95,7 +94,7 @@ export default function Dashboard() {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Dashboard" />
 
             <div className="w-full">
@@ -179,6 +178,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

@@ -1,6 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { User } from '@/types/user';
 
@@ -11,7 +10,7 @@ export default function DashboardIndex() {
     }>().props;
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="px-4 py-6">
@@ -36,6 +35,6 @@ export default function DashboardIndex() {
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

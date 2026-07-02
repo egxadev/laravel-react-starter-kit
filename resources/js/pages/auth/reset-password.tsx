@@ -1,23 +1,21 @@
 import { Form, Head } from '@inertiajs/react';
 import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
 import { update } from '@/routes/password';
 
 type Props = {
     token: string;
     email: string;
+    passwordRules: string;
 };
 
-export default function ResetPassword({ token, email }: Props) {
+export default function ResetPassword({ token, email, passwordRules }: Props) {
     return (
-        <AuthLayout
-            title="Reset password"
-            description="Please enter your new password below"
-        >
+        <>
             <Head title="Reset password" />
 
             <Form
@@ -46,14 +44,14 @@ export default function ResetPassword({ token, email }: Props) {
 
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
-                            <Input
+                            <PasswordInput
                                 id="password"
-                                type="password"
                                 name="password"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 autoFocus
                                 placeholder="Password"
+                                passwordrules={passwordRules}
                             />
                             <InputError message={errors.password} />
                         </div>
@@ -62,13 +60,13 @@ export default function ResetPassword({ token, email }: Props) {
                             <Label htmlFor="password_confirmation">
                                 Confirm password
                             </Label>
-                            <Input
+                            <PasswordInput
                                 id="password_confirmation"
-                                type="password"
                                 name="password_confirmation"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 placeholder="Confirm password"
+                                passwordrules={passwordRules}
                             />
                             <InputError
                                 message={errors.password_confirmation}
@@ -88,6 +86,11 @@ export default function ResetPassword({ token, email }: Props) {
                     </div>
                 )}
             </Form>
-        </AuthLayout>
+        </>
     );
 }
+
+ResetPassword.layout = {
+    title: 'Reset password',
+    description: 'Please enter your new password below',
+};

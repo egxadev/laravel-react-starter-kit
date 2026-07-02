@@ -9,9 +9,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::inertia('/', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::inertia('/', 'welcome')->name('home');
 
 // socialite auth
 Route::middleware('sso')->group(function () {

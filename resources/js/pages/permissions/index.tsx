@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type Permission } from '@/types/permission';
 import { Head, router, usePage } from '@inertiajs/react';
@@ -119,7 +118,7 @@ export default function PermissionIndex() {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="w-full px-2 sm:px-4">
@@ -203,6 +202,6 @@ export default function PermissionIndex() {
                     onPerPageChange={(perPage) => handleServerOperation({ per_page: perPage, page: 1 })}
                 />
             </div>
-        </AppLayout>
+        </>
     );
 }

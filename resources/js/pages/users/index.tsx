@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type User } from '@/types/user';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -19,12 +18,11 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
-import { useFlashMessages } from '@/hooks/use-flash-messages';
 import { columns } from './partials/data-table';
 import { index as indexUsers, create as createUsers } from '@/routes/users';
 
 export default function UserIndex() {
-    const { breadcrumbs, data, meta, filters, flash } = usePage<{
+    const { breadcrumbs, data, meta, filters } = usePage<{
         breadcrumbs: BreadcrumbItem[];
         data: User[];
         meta: {
@@ -41,12 +39,6 @@ export default function UserIndex() {
             sort_dir: string;
             trashed: boolean;
         };
-        flash: {
-            success: string;
-            error: string;
-            warning: string;
-            info: string;
-        };
     }>().props;
     const [search, setSearch] = React.useState(filters.search);
     const [sorting, setSorting] = React.useState<SortingState>([{ id: filters.sort_by, desc: filters.sort_dir === 'desc' }]);
@@ -59,9 +51,6 @@ export default function UserIndex() {
     React.useEffect(() => {
         setIsInitialRender(false);
     }, []);
-
-    // Handle flash messages
-    useFlashMessages();
 
     // Debounce search input
     React.useEffect(() => {
@@ -146,7 +135,7 @@ export default function UserIndex() {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="w-full px-2 sm:px-4">
@@ -248,6 +237,6 @@ export default function UserIndex() {
                     onPerPageChange={(perPage) => handleServerOperation({ per_page: perPage, page: 1 })}
                 />
             </div>
-        </AppLayout>
+        </>
     );
 }

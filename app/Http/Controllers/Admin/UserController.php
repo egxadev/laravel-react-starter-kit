@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
@@ -67,11 +68,10 @@ class UserController extends Controller
     {
         $response = $this->userService->createUser($request->validated());
 
-        if ($response['success']) {
-            return redirect()->route('users.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('users.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -104,11 +104,10 @@ class UserController extends Controller
     {
         $response = $this->userService->updateUser($user, $request->validated());
 
-        if ($response['success']) {
-            return redirect()->route('users.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('users.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -118,15 +117,11 @@ class UserController extends Controller
     {
         $response = $this->userService->deleteUser($id);
 
-        if (isset($response['redirect'])) {
-            return redirect()->route($response['redirect'])->with('success', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
 
-        if ($response['success']) {
-            return redirect()->route('users.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('users.index')->with('error', $response['message']);
-        }
+        $route = isset($response['redirect']) ? $response['redirect'] : 'users.index';
+        return redirect()->route($route);
     }
 
     /**
@@ -136,11 +131,10 @@ class UserController extends Controller
     {
         $response = $this->userService->restoreUser($id);
 
-        if ($response['success']) {
-            return redirect()->route('users.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('users.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -150,10 +144,9 @@ class UserController extends Controller
     {
         $response = $this->userService->forceDeleteUser($id);
 
-        if ($response['success']) {
-            return redirect()->route('users.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('users.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('users.index');
     }
 }

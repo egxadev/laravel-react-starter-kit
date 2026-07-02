@@ -2,9 +2,9 @@ import { type NavItem } from '@/types';
 import { BookOpen, Folder, KeyRound, LayoutGrid, Rocket, UserRoundCog, UsersRound } from 'lucide-react';
 import { index as indexDashboard } from '@/routes/dashboard';
 import { edit as editAppearance } from '@/routes/appearance';
-import { edit as editPassword } from '@/routes/user-password';
+// import { edit as editPassword } from '@/routes/user-password';
 import { edit } from '@/routes/profile';
-import { show } from '@/routes/two-factor';
+// import { show } from '@/routes/two-factor';
 import { index as indexPermissions } from '@/routes/permissions';
 import { index as indexRoles } from '@/routes/roles';
 import { index as indexUsers } from '@/routes/users';
@@ -71,16 +71,16 @@ export const settingsNavItems: NavItem[] = [
         href: edit(),
         icon: null,
     },
-    {
-        title: 'Password',
-        href: editPassword(),
-        icon: null,
-    },
-    {
-        title: 'Two-Factor Auth',
-        href: show(),
-        icon: null,
-    },
+    // {
+    //     title: 'Password',
+    //     href: editPassword(),
+    //     icon: null,
+    // },
+    // {
+    //     title: 'Two-Factor Auth',
+    //     href: show(),
+    //     icon: null,
+    // },
     {
         title: 'Appearance',
         href: editAppearance(),

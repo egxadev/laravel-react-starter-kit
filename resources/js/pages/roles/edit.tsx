@@ -1,5 +1,4 @@
 import Heading from '@/components/heading';
-import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type PageProps } from '@/types';
 import { type Permission } from '@/types/permission';
 import { type Role } from '@/types/role';
@@ -17,7 +16,7 @@ export default function RoleEdit({
 }>) {
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={breadcrumbs[0].title} />
 
             <div className="w-full p-4">
@@ -27,6 +26,6 @@ export default function RoleEdit({
                     <RoleForm mode="edit" role={role} permissions={permissions} className="max-w-xl" />
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

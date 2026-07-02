@@ -7,6 +7,7 @@ use App\Services\RoleService;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
+use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
@@ -67,11 +68,10 @@ class RoleController extends Controller
     {
         $response = $this->roleService->createRole($request->all());
 
-        if ($response['success']) {
-            return redirect()->route('roles.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('roles.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('roles.index');
     }
 
     /**
@@ -104,11 +104,10 @@ class RoleController extends Controller
     {
         $response = $this->roleService->updateRole($role, $request->all());
 
-        if ($response['success']) {
-            return redirect()->route('roles.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('roles.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('roles.index');
     }
 
     /**
@@ -118,10 +117,9 @@ class RoleController extends Controller
     {
         $response = $this->roleService->deleteRole($id);
 
-        if ($response['success']) {
-            return redirect()->route('roles.index')->with('success', $response['message']);
-        } else {
-            return redirect()->route('roles.index')->with('error', $response['message']);
-        }
+        $type = $response['success'] ? 'success' : 'error';
+        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+
+        return redirect()->route('roles.index');
     }
 }
