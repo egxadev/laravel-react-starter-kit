@@ -7,15 +7,16 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Ramsey\Uuid\Uuid;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -35,9 +36,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable, HasRoles, SoftDeletes;
+    use HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, SoftDeletes, TwoFactorAuthenticatable;
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     public static function booted()
@@ -57,16 +59,14 @@ class User extends Authenticatable implements PasskeyUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            /* @chisel-2fa */
             'two_factor_confirmed_at' => 'datetime',
-            /* @end-chisel-2fa */
         ];
     }
 
     /**
      * Returns an array of permissions for the user with the permission name as key and value as true.
      *
-     * @return \Illuminate\Support\Collection<string, bool>
+     * @return Collection<string, bool>
      */
     public function getPermissionArray()
     {
@@ -76,9 +76,9 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Returns a collection of {@see \App\Models\SocialAccount} that the user has.
+     * Returns a collection of {@see SocialAccount} that the user has.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\SocialAccount>
+     * @return \Illuminate\Database\Eloquent\Collection<SocialAccount>
      */
     public function socialAccounts()
     {

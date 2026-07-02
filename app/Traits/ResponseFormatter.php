@@ -7,9 +7,7 @@ trait ResponseFormatter
     /**
      * Success Response
      *
-     * @param mixed $data
-     * @param string $message
-     * @return array
+     * @param  mixed  $data
      */
     protected function successResponse($data = null, string $message = 'Success'): array
     {
@@ -28,27 +26,21 @@ trait ResponseFormatter
     /**
      * Error Response
      *
-     * @param string $message
-     * @param mixed $errors
-     * @return array
+     * @param  mixed  $errors
      */
     protected function errorResponse(string $message = 'Error', $errors = null): array
     {
         return [
             'success' => false,
             'message' => $message,
-            'errors' => $errors
+            'errors' => $errors,
         ];
     }
 
     /**
      * Paginated Response
      *
-     * @param mixed $data
-     * @param array $meta
-     * @param array $filters
-     * @param string $message
-     * @return array
+     * @param  mixed  $data
      */
     protected function paginatedResponse($data, array $meta, array $filters = [], string $message = 'Success'): array
     {
@@ -57,7 +49,7 @@ trait ResponseFormatter
             'message' => $message,
             'data' => $data,
             'meta' => $meta,
-            'filters' => $filters
+            'filters' => $filters,
         ];
     }
-} 
+}

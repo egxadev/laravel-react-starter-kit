@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -12,8 +11,8 @@ class DashboardController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Dashboard',
-                'href' => route('dashboard.index')
-            ]
+                'href' => route('dashboard.index'),
+            ],
         ];
 
         return inertia('dashboard/index', [

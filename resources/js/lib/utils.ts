@@ -1,4 +1,5 @@
-import { usePage, type InertiaLinkProps } from '@inertiajs/react';
+import { usePage  } from '@inertiajs/react';
+import type {InertiaLinkProps} from '@inertiajs/react';
 import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';

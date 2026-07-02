@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Exception;
-use App\Models\User;
-use App\Models\SocialAccount;
 use App\Http\Controllers\Controller;
+use App\Models\SocialAccount;
+use App\Models\User;
+use Exception;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
@@ -48,22 +48,22 @@ class SocialiteController extends Controller
             // Jika belum ada
         } else {
 
-            // User berdasarkan email 
+            // User berdasarkan email
             $user = User::where('email', $socialUser->getEmail())->first();
 
             // Jika Tidak ada user
-            if (!$user) {
+            if (! $user) {
                 // Create user baru
                 $user = User::create([
-                    'name'  => $socialUser->getName(),
-                    'email' => $socialUser->getEmail()
+                    'name' => $socialUser->getName(),
+                    'email' => $socialUser->getEmail(),
                 ]);
             }
 
             // Buat Social Account baru
             $user->socialAccounts()->create([
-                'provider_id'   => $socialUser->getId(),
-                'provider_name' => $provider
+                'provider_id' => $socialUser->getId(),
+                'provider_name' => $provider,
             ]);
 
             // return user

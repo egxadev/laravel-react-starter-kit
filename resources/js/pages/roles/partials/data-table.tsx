@@ -1,3 +1,7 @@
+import { Link, router } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,13 +22,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { edit as editRoles } from '@/routes/roles';
 import { hasAnyPermission } from '@/lib/utils';
-import { type Role } from '@/types/role';
-import { Link, router } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-import { useState } from 'react';
+import { edit as editRoles } from '@/routes/roles';
+import type {Role} from '@/types/role';
 
 export const columns: ColumnDef<Role>[] = [
     {

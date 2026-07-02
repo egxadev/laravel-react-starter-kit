@@ -1,16 +1,18 @@
-import { Role } from './role';
-import type { User } from './user';
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    avatar?: string;
+    email_verified_at: string | null;
+    two_factor_enabled?: boolean;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
+};
 
-export interface Auth {
+export type Auth = {
     user: User;
-}
-
-export interface PageProps<T extends Record<string, unknown> = Record<string, unknown>> extends T {
-    auth?: {
-        user: User;
-        permissions: string[];
-    };
-}
+};
 
 /* @chisel-passkeys */
 export type Passkey = {
@@ -22,7 +24,6 @@ export type Passkey = {
 };
 /* @end-chisel-passkeys */
 
-/* @chisel-2fa */
 export type TwoFactorSetupData = {
     svg: string;
     url: string;
@@ -31,4 +32,3 @@ export type TwoFactorSetupData = {
 export type TwoFactorSecretKey = {
     secretKey: string;
 };
-/* @end-chisel-2fa */

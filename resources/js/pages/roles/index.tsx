@@ -1,15 +1,8 @@
-import { DataTablePagination } from '@/components/data-table-pagination';
-import { Button } from '@/components/ui/button';
-import { index as indexRoles, create as createRoles } from '@/routes/roles';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { type BreadcrumbItem } from '@/types';
-import { type Role } from '@/types/role';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
+import type {
     SortingState,
-    VisibilityState,
+    VisibilityState} from '@tanstack/react-table';
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -19,6 +12,14 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
+import { DataTablePagination } from '@/components/data-table-pagination';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { index as indexRoles, create as createRoles } from '@/routes/roles';
+import type {BreadcrumbItem} from '@/types';
+import type {Role} from '@/types/role';
 import { columns } from './partials/data-table';
 
 export default function RoleIndex() {
@@ -52,7 +53,9 @@ export default function RoleIndex() {
 
     // Debounce search input
     React.useEffect(() => {
-        if (isInitialRender) return;
+        if (isInitialRender) {
+return;
+}
 
         const timer = setTimeout(() => {
             handleServerOperation({ search, page: 1 });
@@ -63,7 +66,9 @@ export default function RoleIndex() {
 
     // Handle sorting changes
     React.useEffect(() => {
-        if (isInitialRender) return;
+        if (isInitialRender) {
+return;
+}
 
         if (sorting.length > 0) {
             handleServerOperation({

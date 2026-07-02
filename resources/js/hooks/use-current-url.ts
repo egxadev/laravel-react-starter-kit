@@ -34,7 +34,12 @@ export type UseCurrentUrlReturn = {
 
 export function useCurrentUrl(): UseCurrentUrlReturn {
     const page = usePage();
-    const currentUrlPath = new URL(page.url, window?.location.origin).pathname;
+    const currentUrlPath = new URL(
+        page.url,
+        typeof window !== 'undefined'
+            ? window.location.origin
+            : 'http://localhost',
+    ).pathname;
 
     const isCurrentUrl: IsCurrentUrlFn = (
         urlToCheck: NonNullable<InertiaLinkProps['href']>,
@@ -102,10 +107,13 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
             try {
                 const absoluteUrl = new URL(urlString);
                 const absoluteBase = normalizePath(absoluteUrl.pathname);
+
                 if (absoluteBase === normalizedCurrent) {
                     return true;
                 }
+
                 const baseWithSlash = absoluteBase + '/';
+
                 return normalizedCurrent.startsWith(baseWithSlash);
             } catch {
                 return false;
@@ -122,6 +130,7 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
         // But NOT /users-settings or /usersettings
         // We ensure the base path is followed by '/' or end of string
         const baseWithSlash = normalizedBase + '/';
+
         if (normalizedCurrent.startsWith(baseWithSlash)) {
             return true;
         }

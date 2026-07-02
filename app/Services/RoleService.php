@@ -3,31 +3,31 @@
 namespace App\Services;
 
 use App\Traits\ResponseFormatter;
-use Spatie\Permission\Models\Role;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Spatie\Permission\Models\Role;
 
 class RoleService
 {
     use ResponseFormatter;
 
     private const DEFAULT_PER_PAGE = 10;
+
     private const DEFAULT_SORT_BY = 'name';
+
     private const DEFAULT_SORT_DIR = 'asc';
+
     private const FILTERABLE_COLUMNS = ['name', 'created_at'];
 
     /**
      * Get paginated roles with filters.
-     *
-     * @param array $filters
-     * @return array
      */
     public function getPaginatedRoles(array $filters): array
     {
         $perPage = (int) ($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
         $page = (int) ($filters['page'] ?? 1);
-        $sortBy  = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
+        $sortBy = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
         $sortDir = in_array($dir = strtolower($filters['sort_dir'] ?? self::DEFAULT_SORT_DIR), ['asc', 'desc']) ? $dir : self::DEFAULT_SORT_DIR;
 
         $search = trim($filters['search'] ?? '');
@@ -47,32 +47,29 @@ class RoleService
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $this->paginatedResponse($data->items(), [
-            'current_page'  => $data->currentPage(),
-            'last_page'     => $data->lastPage(),
-            'per_page'      => $data->perPage(),
-            'total'         => $data->total(),
-            'from'          => $data->firstItem(),
-            'to'            => $data->lastItem(),
+            'current_page' => $data->currentPage(),
+            'last_page' => $data->lastPage(),
+            'per_page' => $data->perPage(),
+            'total' => $data->total(),
+            'from' => $data->firstItem(),
+            'to' => $data->lastItem(),
         ], [
-            'search'        => $search,
-            'sort_by'       => $sortBy,
-            'sort_dir'      => $sortDir,
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir,
         ]);
     }
 
     /**
      * Create a new role and assign permissions.
-     *
-     * @param array $data
-     * @return array
      */
     public function createRole(array $data): array
     {
         try {
             $createdData = DB::transaction(function () use ($data) {
                 $role = Role::create([
-                    'name'          => $data['name'],
-                    'created_by'    => auth()->id()
+                    'name' => $data['name'],
+                    'created_by' => auth()->id(),
                 ]);
                 $role->givePermissionTo($data['permissions']);
 
@@ -81,7 +78,8 @@ class RoleService
 
             return $this->successResponse($createdData, 'Role created successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to create role: ' . $e->getMessage());
+            Log::error('Failed to create role: '.$e->getMessage());
+
             return $this->errorResponse('Failed to create role.');
         }
     }
@@ -89,8 +87,6 @@ class RoleService
     /**
      * Update role and sync permissions.
      *
-     * @param Role $role
-     * @param array $data
      * @return Role
      */
     public function updateRole(Role $role, array $data): array
@@ -98,10 +94,11 @@ class RoleService
         try {
             $updatedData = DB::transaction(function () use ($role, $data) {
                 $role->update([
-                    'name'          => $data['name'],
-                    'updated_by'    => auth()->id()
+                    'name' => $data['name'],
+                    'updated_by' => auth()->id(),
                 ]);
                 $role->syncPermissions($data['permissions']);
+
                 return $role;
             });
 
@@ -109,16 +106,14 @@ class RoleService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
-            Log::error('Failed to update role: ' . $e->getMessage());
+            Log::error('Failed to update role: '.$e->getMessage());
+
             return $this->errorResponse('Failed to update role.');
         }
     }
 
     /**
      * Delete role by ID.
-     *
-     * @param string $id
-     * @return array
      */
     public function deleteRole(string $id): array
     {
@@ -134,7 +129,8 @@ class RoleService
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse('Role not found.');
         } catch (\Exception $e) {
-            Log::error('Failed to delete role: ' . $e->getMessage());
+            Log::error('Failed to delete role: '.$e->getMessage());
+
             return $this->errorResponse('Failed to delete role.');
         }
     }

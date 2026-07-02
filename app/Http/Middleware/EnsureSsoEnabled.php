@@ -13,7 +13,7 @@ class EnsureSsoEnabled
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!config('services.sso_enabled')) {
+        if (! config('services.sso_enabled')) {
             abort(404);
         }
 

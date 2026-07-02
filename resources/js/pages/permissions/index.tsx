@@ -1,14 +1,8 @@
-import { DataTablePagination } from '@/components/data-table-pagination';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { type BreadcrumbItem } from '@/types';
-import { type Permission } from '@/types/permission';
 import { Head, router, usePage } from '@inertiajs/react';
-import {
+import type {
     SortingState,
-    VisibilityState,
+    VisibilityState} from '@tanstack/react-table';
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -18,8 +12,15 @@ import {
 } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
-import { columns } from './partials/data-table';
+import { DataTablePagination } from '@/components/data-table-pagination';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { index as indexPermissions } from '@/routes/permissions';
+import type {BreadcrumbItem} from '@/types';
+import type {Permission} from '@/types/permission';
+import { columns } from './partials/data-table';
 
 export default function PermissionIndex() {
     const { breadcrumbs, data, meta, filters } = usePage<{
@@ -65,7 +66,9 @@ export default function PermissionIndex() {
 
     // Debounce search input
     React.useEffect(() => {
-        if (isInitialRender) return;
+        if (isInitialRender) {
+return;
+}
 
         const timer = setTimeout(() => {
             handleServerOperation({ search, page: 1 });
@@ -76,7 +79,9 @@ export default function PermissionIndex() {
 
     // Handle sorting changes
     React.useEffect(() => {
-        if (isInitialRender) return;
+        if (isInitialRender) {
+return;
+}
 
         if (sorting.length > 0) {
             handleServerOperation({

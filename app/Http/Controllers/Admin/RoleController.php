@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Services\RoleService;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
+use App\Services\RoleService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -27,8 +27,8 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => route('roles.index')
-            ]
+                'href' => route('roles.index'),
+            ],
         ];
 
         $data = $this->roleService->getPaginatedRoles($request->all());
@@ -47,12 +47,12 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => route('roles.index')
+                'href' => route('roles.index'),
             ],
             [
                 'title' => 'Create',
-                'href' => route('roles.create')
-            ]
+                'href' => route('roles.create'),
+            ],
         ];
 
         return inertia('roles/create', [
@@ -82,18 +82,18 @@ class RoleController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Role',
-                'href' => route('roles.index')
+                'href' => route('roles.index'),
             ],
             [
                 'title' => 'Edit',
-                'href' => route('roles.edit', $id)
-            ]
+                'href' => route('roles.edit', $id),
+            ],
         ];
 
         return inertia('roles/edit', [
             'breadcrumbs' => $breadcrumbs,
-            'role'          => Role::with('permissions')->findOrFail($id),
-            'permissions'   => Permission::all(),
+            'role' => Role::with('permissions')->findOrFail($id),
+            'permissions' => Permission::all(),
         ]);
     }
 

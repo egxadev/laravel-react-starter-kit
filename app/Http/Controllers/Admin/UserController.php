@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -27,8 +27,8 @@ class UserController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'User',
-                'href' => route('users.index')
-            ]
+                'href' => route('users.index'),
+            ],
         ];
 
         $data = $this->userService->getPaginatedUsers($request->all());
@@ -47,12 +47,12 @@ class UserController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'User',
-                'href' => route('users.index')
+                'href' => route('users.index'),
             ],
             [
                 'title' => 'Create',
-                'href' => route('users.create')
-            ]
+                'href' => route('users.create'),
+            ],
         ];
 
         return inertia('users/create', [
@@ -82,12 +82,12 @@ class UserController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'User',
-                'href' => route('users.index')
+                'href' => route('users.index'),
             ],
             [
                 'title' => 'Edit',
-                'href' => route('users.edit', $id)
-            ]
+                'href' => route('users.edit', $id),
+            ],
         ];
 
         return inertia('users/edit', [
@@ -121,6 +121,7 @@ class UserController extends Controller
         Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
 
         $route = isset($response['redirect']) ? $response['redirect'] : 'users.index';
+
         return redirect()->route($route);
     }
 

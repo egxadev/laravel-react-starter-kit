@@ -1,3 +1,7 @@
+import { Link, router } from '@inertiajs/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,13 +22,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { destroy as destroyUsers, edit as editUsers, forceDelete as forceDeleteUsers, restore as restoreUsers } from '@/routes/users';
 import { hasAnyPermission } from '@/lib/utils';
-import { type User } from '@/types/user';
-import { Link, router } from '@inertiajs/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-import { useState } from 'react';
+import { destroy as destroyUsers, edit as editUsers, forceDelete as forceDeleteUsers, restore as restoreUsers } from '@/routes/users';
+import type {User} from '@/types/user';
 
 export const columns: ColumnDef<User>[] = [
     {

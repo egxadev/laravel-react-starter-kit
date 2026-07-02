@@ -1,9 +1,9 @@
-import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import {
+import type {
     ColumnFiltersState,
     SortingState,
-    VisibilityState,
+    VisibilityState} from '@tanstack/react-table';
+import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import type {BreadcrumbItem} from '@/types';
 import { columns } from './partials/data-table';
 
 const data: Payment[] = [

@@ -1,10 +1,10 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { type Permission } from '@/types/permission';
+import type {Permission} from '@/types/permission';
 
 export const columns: ColumnDef<Permission>[] = [
     {

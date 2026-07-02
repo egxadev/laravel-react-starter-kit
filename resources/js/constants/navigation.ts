@@ -1,13 +1,13 @@
-import { type NavItem } from '@/types';
 import { BookOpen, Folder, KeyRound, LayoutGrid, Rocket, UserRoundCog, UsersRound } from 'lucide-react';
-import { index as indexDashboard } from '@/routes/dashboard';
 import { edit as editAppearance } from '@/routes/appearance';
+import { index as indexDashboard } from '@/routes/dashboard';
 // import { edit as editPassword } from '@/routes/user-password';
-import { edit } from '@/routes/profile';
 // import { show } from '@/routes/two-factor';
 import { index as indexPermissions } from '@/routes/permissions';
+import { edit } from '@/routes/profile';
 import { index as indexRoles } from '@/routes/roles';
 import { index as indexUsers } from '@/routes/users';
+import type {NavItem} from '@/types';
 
 export const mainNavItems: NavItem[] = [
     {

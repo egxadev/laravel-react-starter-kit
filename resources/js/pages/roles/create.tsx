@@ -1,7 +1,7 @@
-import Heading from '@/components/heading';
-import { type BreadcrumbItem, type PageProps } from '@/types';
-import { type Permission } from '@/types/permission';
 import { Head } from '@inertiajs/react';
+import Heading from '@/components/heading';
+import type {BreadcrumbItem, PageProps} from '@/types';
+import type {Permission} from '@/types/permission';
 import { RoleForm } from './partials/form';
 
 export default function RoleCreate({

@@ -39,8 +39,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user'          => $request->user(),
-                'permissions'   => $request->user() ? $request->user()->getPermissionArray() : []
+                'user' => $request->user(),
+                'permissions' => $request->user() ? $request->user()->getPermissionArray() : [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'ssoEnabled' => config('services.sso_enabled'),

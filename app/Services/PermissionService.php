@@ -10,21 +10,21 @@ class PermissionService
     use ResponseFormatter;
 
     private const DEFAULT_PER_PAGE = 10;
+
     private const DEFAULT_SORT_BY = 'name';
+
     private const DEFAULT_SORT_DIR = 'asc';
+
     private const FILTERABLE_COLUMNS = ['name', 'created_at'];
 
     /**
      * Get paginated permissions with filters.
-     *
-     * @param array $filters
-     * @return array
      */
     public function getPaginatedPermissions(array $filters): array
     {
         $perPage = (int) ($filters['per_page'] ?? self::DEFAULT_PER_PAGE);
         $page = (int) ($filters['page'] ?? 1);
-        $sortBy  = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
+        $sortBy = in_array($sort = $filters['sort_by'] ?? self::DEFAULT_SORT_BY, self::FILTERABLE_COLUMNS) ? $sort : self::DEFAULT_SORT_BY;
         $sortDir = in_array($dir = strtolower($filters['sort_dir'] ?? self::DEFAULT_SORT_DIR), ['asc', 'desc']) ? $dir : self::DEFAULT_SORT_DIR;
         $search = trim($filters['search'] ?? '');
 
@@ -43,16 +43,16 @@ class PermissionService
         $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return $this->paginatedResponse($data->items(), [
-            'current_page'  => $data->currentPage(),
-            'last_page'     => $data->lastPage(),
-            'per_page'      => $data->perPage(),
-            'total'         => $data->total(),
-            'from'          => $data->firstItem(),
-            'to'            => $data->lastItem(),
+            'current_page' => $data->currentPage(),
+            'last_page' => $data->lastPage(),
+            'per_page' => $data->perPage(),
+            'total' => $data->total(),
+            'from' => $data->firstItem(),
+            'to' => $data->lastItem(),
         ], [
-            'search'        => $search,
-            'sort_by'       => $sortBy,
-            'sort_dir'      => $sortDir,
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_dir' => $sortDir,
         ]);
     }
 }

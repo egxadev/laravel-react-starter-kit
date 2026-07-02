@@ -1,3 +1,5 @@
+import { Link, usePage } from '@inertiajs/react';
+import { ChevronRight } from 'lucide-react';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -9,15 +11,13 @@ import {
     SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
+import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { hasAnyPermission } from '@/lib/utils';
-import { Link, usePage } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
+import type { NavItem } from '@/types';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { useCurrentUrl } from '@/hooks/use-current-url';
-import type { NavItem } from '@/types';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();

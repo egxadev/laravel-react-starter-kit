@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionService;
+use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
@@ -23,8 +23,8 @@ class PermissionController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Permission',
-                'href' => route('permissions.index')
-            ]
+                'href' => route('permissions.index'),
+            ],
         ];
 
         $data = $this->permissionService->getPaginatedPermissions($request->all());
