@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ChevronsUpDown, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -33,7 +33,7 @@ export const columns: ColumnDef<User>[] = [
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ChevronsUpDown className="ml-2 h-4 w-4" />
                 </Button>
             );
         },
@@ -44,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     Email
-                    <ArrowUpDown />
+                    <ChevronsUpDown />
                 </Button>
             );
         },
