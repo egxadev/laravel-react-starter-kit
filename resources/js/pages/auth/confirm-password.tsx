@@ -11,20 +11,25 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/password/confirm';
 
+import { usePage } from '@inertiajs/react';
+
 export default function ConfirmPassword() {
+    const { passkeysEnabled } = usePage<{ passkeysEnabled: boolean }>().props;
     return (
         <>
             <Head title="Confirm password" />
 
-            <PasskeyVerify
-                routes={{
-                    options: confirmOptions(),
-                    submit: confirmStore(),
-                }}
-                label="Confirm with passkey"
-                loadingLabel="Confirming..."
-                separator="Or confirm with password"
-            />
+            {passkeysEnabled && (
+                <PasskeyVerify
+                    routes={{
+                        options: confirmOptions(),
+                        submit: confirmStore(),
+                    }}
+                    label="Confirm with passkey"
+                    loadingLabel="Confirming..."
+                    separator="Or confirm with password"
+                />
+            )}
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (

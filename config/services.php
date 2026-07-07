@@ -59,4 +59,16 @@ return [
 
     'sso_enabled' => env('SSO_ENABLED', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Passkeys Settings
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether Passkeys login options are displayed
+    | on the login page. Set to false to hide Passkeys options.
+    |
+    */
+
+    'passkeys_enabled' => env('PASSKEYS_ENABLED', true),
+
 ];

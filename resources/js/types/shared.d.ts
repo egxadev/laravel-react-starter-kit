@@ -5,5 +5,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    ssoEnabled: boolean;
+    passkeysEnabled: boolean;
     [key: string]: unknown;
 }

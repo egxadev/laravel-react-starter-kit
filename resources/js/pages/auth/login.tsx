@@ -18,13 +18,13 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
-    const { ssoEnabled } = usePage<{ ssoEnabled: boolean }>().props;
+    const { ssoEnabled, passkeysEnabled } = usePage<{ ssoEnabled: boolean; passkeysEnabled: boolean }>().props;
 
     return (
         <>
             <Head title="Log in" />
 
-            <PasskeyVerify />
+            {passkeysEnabled && <PasskeyVerify />}
 
             <Form
                 {...store.form()}
