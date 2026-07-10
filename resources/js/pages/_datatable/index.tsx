@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type {BreadcrumbItem} from '@/types';
 import { columns } from './partials/data-table';
 
 const data: Payment[] = [
@@ -51,13 +50,6 @@ const data: Payment[] = [
         amount: 721,
         status: 'failed',
         email: 'carmella@example.com',
-    },
-];
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
     },
 ];
 

@@ -1,4 +1,3 @@
-import { Role } from './role';
 import type { User } from './user';
 
 export interface Auth {
