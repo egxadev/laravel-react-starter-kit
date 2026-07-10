@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import {
     index as confirmOptions,
     store as confirmStore,
@@ -11,10 +12,10 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/password/confirm';
 
-import { usePage } from '@inertiajs/react';
 
 export default function ConfirmPassword() {
     const { passkeysEnabled } = usePage<{ passkeysEnabled: boolean }>().props;
+
     return (
         <>
             <Head title="Confirm password" />
