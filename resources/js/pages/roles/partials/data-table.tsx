@@ -22,7 +22,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { hasAnyPermission } from '@/lib/utils';
+import { useHasAnyPermission } from '@/lib/utils';
 import { edit as editRoles } from '@/routes/roles';
 import type {Role} from '@/types/role';
 
@@ -50,6 +50,7 @@ export const columns: ColumnDef<Role>[] = [
 
 const ActionCell = ({ data }: { data: Role }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const hasAnyPermission = useHasAnyPermission();
 
     function handleDelete() {
         router.delete(`roles/${data.id}`, {

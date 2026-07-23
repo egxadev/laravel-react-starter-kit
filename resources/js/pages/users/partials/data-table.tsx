@@ -22,7 +22,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { hasAnyPermission } from '@/lib/utils';
+import { useHasAnyPermission } from '@/lib/utils';
 import { destroy as destroyUsers, edit as editUsers, forceDelete as forceDeleteUsers, restore as restoreUsers } from '@/routes/users';
 import type {User} from '@/types/user';
 
@@ -63,6 +63,7 @@ export const columns: ColumnDef<User>[] = [
 
 const ActionCell = ({ data, isTrashed = false }: { data: User; isTrashed?: boolean }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const hasAnyPermission = useHasAnyPermission();
 
     function handleDelete() {
         router.delete(destroyUsers({ user: data.id }), {

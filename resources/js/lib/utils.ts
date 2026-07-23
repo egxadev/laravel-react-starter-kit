@@ -14,10 +14,12 @@ type AuthProps = {
     };
 };
 
-export function hasAnyPermission(permissions: string[]): boolean {
+export function useHasAnyPermission() {
     const { auth } = usePage<AuthProps>().props;
 
-    return permissions.some((permission) => auth.permissions[permission]);
+    return (permissions: string[]): boolean => {
+        return permissions.some((permission) => auth.permissions[permission]);
+    };
 }
 
 export function isSameUrl(
