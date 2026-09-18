@@ -14,7 +14,7 @@ import {
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
-import { useHasAnyPermission } from '@/lib/utils';
+
 import type { NavItem } from '@/types';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -24,14 +24,12 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const isMobile = useIsMobile();
     const cleanup = useMobileNavigation();
     const { isCurrentUrl, isActiveOrChild } = useCurrentUrl();
-    const hasAnyPermission = useHasAnyPermission();
 
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) =>
-                    item.permission && hasAnyPermission(item.permission) ? (
+                {items.map((item) => (
                         item.items && item.items.length > 0 ? (
                             state === 'collapsed' ? (
                                 <SidebarMenuItem>
@@ -101,8 +99,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         )
-                    ) : null,
-                )}
+                ))}
             </SidebarMenu>
         </SidebarGroup>
     );

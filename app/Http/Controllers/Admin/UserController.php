@@ -4,55 +4,36 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\Role;
 use App\Models\User;
-use App\Services\UserService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    protected $userService;
+    use AuthorizesRequests;
 
-    public function __construct(UserService $userService)
-    {
-        $this->userService = $userService;
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
+
         $breadcrumbs = [
-            [
-                'title' => 'User',
-                'href' => route('users.index'),
-            ],
+            ['title' => 'User', 'href' => route('users.index')],
         ];
 
-        $data = $this->userService->getPaginatedUsers($request->all());
+        $data = User::filterPaginate($request->all());
 
-        return inertia('users/index', array_merge(
-            ['breadcrumbs' => $breadcrumbs],
-            $data
-        ));
+        return inertia('users/index', array_merge(['breadcrumbs' => $breadcrumbs], $data));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $this->authorize('create', User::class);
+
         $breadcrumbs = [
-            [
-                'title' => 'User',
-                'href' => route('users.index'),
-            ],
-            [
-                'title' => 'Create',
-                'href' => route('users.create'),
-            ],
+            ['title' => 'User', 'href' => route('users.index')],
+            ['title' => 'Create', 'href' => route('users.create')],
         ];
 
         return inertia('users/create', [
@@ -61,92 +42,73 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(UserRequest $request)
     {
-        $response = $this->userService->createUser($request->validated());
+        $this->authorize('create', User::class);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        User::createWithRoles($request->validated(), $request->validated('roles'));
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User created successfully.']);
 
         return redirect()->route('users.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(User $user)
     {
+        $this->authorize('update', $user);
+
         $breadcrumbs = [
-            [
-                'title' => 'User',
-                'href' => route('users.index'),
-            ],
-            [
-                'title' => 'Edit',
-                'href' => route('users.edit', $id),
-            ],
+            ['title' => 'User', 'href' => route('users.index')],
+            ['title' => 'Edit', 'href' => route('users.edit', $user)],
         ];
 
         return inertia('users/edit', [
             'breadcrumbs' => $breadcrumbs,
             'roles' => Role::all(),
-            'user' => User::with('roles')->findOrFail($id),
+            'user' => $user->load('roles'),
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UserRequest $request, User $user)
     {
-        $response = $this->userService->updateUser($user, $request->validated());
+        $this->authorize('update', $user);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        $user->updateWithRoles($request->validated(), $request->validated('roles'));
 
-        return redirect()->route('users.index');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $response = $this->userService->deleteUser($id);
-
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
-
-        $route = isset($response['redirect']) ? $response['redirect'] : 'users.index';
-
-        return redirect()->route($route);
-    }
-
-    /**
-     * Restore the specified resource from storage.
-     */
-    public function restore(string $id)
-    {
-        $response = $this->userService->restoreUser($id);
-
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated successfully.']);
 
         return redirect()->route('users.index');
     }
 
-    /**
-     * Force delete the specified resource from storage.
-     */
-    public function forceDelete(string $id)
+    public function destroy(User $user)
     {
-        $response = $this->userService->forceDeleteUser($id);
+        $this->authorize('delete', $user);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        $user->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted successfully.']);
+
+        return redirect()->route('users.index');
+    }
+
+    public function restore(User $user)
+    {
+        $this->authorize('restore', $user);
+
+        $user->restore();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User restored successfully.']);
+
+        return redirect()->route('users.index');
+    }
+
+    public function forceDelete(User $user)
+    {
+        $this->authorize('forceDelete', $user);
+
+        $user->forceDelete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User permanently deleted successfully.']);
 
         return redirect()->route('users.index');
     }

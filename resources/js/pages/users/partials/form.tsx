@@ -1,166 +1,93 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { router, usePage } from '@inertiajs/react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type {PageProps} from '@/types';
-import type {Role} from '@/types/role';
-import type {User} from '@/types/user';
+import { Label } from '@/components/ui/label';
+import { store as storeUsers, update as updateUsers } from '@/routes/users';
+import type { Role } from '@/types/role';
+import type { User } from '@/types/user';
 
-const formSchema = z
-    .object({
-        name: z.string().min(2, { message: 'Role name must be at least 2 characters.' }),
-        email: z.string().email({ message: 'Invalid email address.' }),
-        roles: z.array(z.number()),
-        password: z.string().min(8, { message: 'Password must be at least 8 characters.' }).optional(),
-        password_confirmation: z.string().min(8, { message: 'Confirm Password must be at least 8 characters.' }).optional(),
-    })
-    .refine((data) => data.password === data.password_confirmation, {
-        message: "Passwords don't match",
-        path: ['password_confirmation'],
-    });
-
-export function UserForm({
-    mode,
-    roles,
-    user,
-    className,
-}: PageProps<{
+interface UserFormProps {
     mode: 'create' | 'edit';
     roles: Role[];
     user?: User;
-    className: string;
-}>) {
-    const { errors } = usePage().props;
+    className?: string;
+}
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: user?.name,
-            email: user?.email,
-            roles: user?.roles?.map((role) => role.id) || [],
-        },
+export function UserForm({ mode, roles, user, className }: UserFormProps) {
+    const { data, setData, post, put, errors, processing } = useForm({
+        name: user?.name ?? '',
+        email: user?.email ?? '',
+        roles: user?.roles?.map((r) => r.id) ?? [] as number[],
+        password: '',
+        password_confirmation: '',
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const isCreateMode = mode === 'create';
-        const url = isCreateMode ? '/users' : `/users/${user?.id}`;
-
-        if (isCreateMode) {
-            router.post(url, values, {
-                onSuccess: () => {
-                    console.log('User created successfully.');
-                },
-                onError: () => {
-                    console.error('Failed to create user.');
-                },
-            });
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (mode === 'create') {
+            post(storeUsers().url);
         } else {
-            router.put(url, values, {
-                onSuccess: () => {
-                    console.log('User updated successfully.');
-                },
-                onError: () => {
-                    console.error('Failed to update user.');
-                },
-            });
+            put(updateUsers({ user: user!.id }).url);
         }
     }
 
+    function toggleRole(id: number, checked: boolean) {
+        setData('roles', checked ? [...data.roles, id] : data.roles.filter((r) => r !== id));
+    }
+
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={`${className} space-y-8`}>
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>User Name</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage>{errors.name}</FormMessage>
-                        </FormItem>
-                    )}
-                />
+        <form onSubmit={handleSubmit} className={`${className ?? ''} space-y-6`}>
+            <div className="space-y-2">
+                <Label htmlFor="name">User Name</Label>
+                <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
+                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage>{errors.email}</FormMessage>
-                        </FormItem>
-                    )}
-                />
+            <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} />
+                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="roles"
-                    render={({ field }) => (
-                        <FormItem>
-                            <div className="mb-4">
-                                <FormLabel className="text-base">Role</FormLabel>
-                                <FormDescription>Select roles for this user.</FormDescription>
-                            </div>
-                            {roles.map((role) => (
-                                <FormItem key={role.id} className="flex flex-row items-start space-y-0 space-x-3">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={(field.value ?? []).includes(role.id)}
-                                            onCheckedChange={(checked) => {
-                                                const currentValues = Array.isArray(field.value) ? field.value : [];
-                                                field.onChange(
-                                                    checked ? [...currentValues, role.id] : currentValues.filter((value) => value !== role.id),
-                                                );
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal">{role.name}</FormLabel>
-                                </FormItem>
-                            ))}
-                            <FormMessage>{errors.roles}</FormMessage>
-                        </FormItem>
-                    )}
-                />
+            <div className="space-y-3">
+                <Label className="text-base">Role</Label>
+                <p className="text-muted-foreground text-sm">Select roles for this user.</p>
+                {roles.map((role) => (
+                    <div key={role.id} className="flex items-center space-x-3">
+                        <Checkbox
+                            id={`role-${role.id}`}
+                            checked={data.roles.includes(role.id)}
+                            onCheckedChange={(checked) => toggleRole(role.id, !!checked)}
+                        />
+                        <Label htmlFor={`role-${role.id}`} className="text-sm font-normal">
+                            {role.name}
+                        </Label>
+                    </div>
+                ))}
+                {errors.roles && <p className="text-sm text-red-500">{errors.roles}</p>}
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage>{errors.password}</FormMessage>
-                        </FormItem>
-                    )}
-                />
+            <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} />
+                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="password_confirmation"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage>{errors.password_confirmation}</FormMessage>
-                        </FormItem>
-                    )}
+            <div className="space-y-2">
+                <Label htmlFor="password_confirmation">Confirm Password</Label>
+                <Input
+                    id="password_confirmation"
+                    type="password"
+                    value={data.password_confirmation}
+                    onChange={(e) => setData('password_confirmation', e.target.value)}
                 />
+                {errors.password_confirmation && <p className="text-sm text-red-500">{errors.password_confirmation}</p>}
+            </div>
 
-                <Button type="submit">Submit</Button>
-            </form>
-        </Form>
+            <Button type="submit" disabled={processing}>
+                Submit
+            </Button>
+        </form>
     );
 }

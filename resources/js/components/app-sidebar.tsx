@@ -5,16 +5,19 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { footerNavItems, mainNavItems } from '@/constants/navigation';
-import { index as indexDashboard } from '@/routes/dashboard';
+import { useFilteredNavItems } from '@/hooks/use-filtered-nav-items';
+import { dashboard } from '@/routes';
 
 export function AppSidebar() {
+    const filteredNavItems = useFilteredNavItems(mainNavItems);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={indexDashboard()} prefetch>
+                            <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -23,7 +26,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={filteredNavItems} />
             </SidebarContent>
 
             <SidebarFooter>

@@ -1,6 +1,6 @@
 import { BookOpen, Folder, KeyRound, LayoutGrid, Rocket, UserRoundCog, UsersRound } from 'lucide-react';
+import { dashboard } from '@/routes';
 import { edit as editAppearance } from '@/routes/appearance';
-import { index as indexDashboard } from '@/routes/dashboard';
 // import { edit as editPassword } from '@/routes/user-password';
 // import { show } from '@/routes/two-factor';
 import { index as indexPermissions } from '@/routes/permissions';
@@ -12,7 +12,7 @@ import type {NavItem} from '@/types';
 export const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: indexDashboard(),
+        href: dashboard(),
         icon: LayoutGrid,
         permission: ['dashboard.index'],
     },

@@ -33,7 +33,7 @@ import { footerNavItems, mainNavItems } from '@/constants/navigation';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
-import { index as indexDashboard } from '@/routes/dashboard';
+import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 
 type Props = {
@@ -115,7 +115,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
 
                     <Link
-                        href={indexDashboard()}
+                        href={dashboard()}
                         prefetch
                         className="flex items-center space-x-2"
                     >
