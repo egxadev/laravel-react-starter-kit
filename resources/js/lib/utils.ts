@@ -1,5 +1,5 @@
-import { usePage  } from '@inertiajs/react';
-import type {InertiaLinkProps} from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import type { InertiaLinkProps } from '@inertiajs/react';
 import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -9,8 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 type AuthProps = {
-    auth: {
-        permissions: Record<string, boolean>;
+    auth?: {
+        permissions?: Record<string, boolean>;
     };
 };
 
@@ -18,7 +18,9 @@ export function useHasAnyPermission() {
     const { auth } = usePage<AuthProps>().props;
 
     return (permissions: string[]): boolean => {
-        return permissions.some((permission) => auth.permissions[permission]);
+        return permissions.some((permission) =>
+            Boolean(auth?.permissions?.[permission]),
+        );
     };
 }
 

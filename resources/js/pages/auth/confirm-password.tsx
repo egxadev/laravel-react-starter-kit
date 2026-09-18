@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/password/confirm';
 
-
 export default function ConfirmPassword() {
     const { passkeysEnabled } = usePage<{ passkeysEnabled: boolean }>().props;
 

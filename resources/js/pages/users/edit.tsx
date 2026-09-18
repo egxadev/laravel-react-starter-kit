@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
-import type {BreadcrumbItem, PageProps} from '@/types';
-import type {Role} from '@/types/role';
-import type {User} from '@/types/user';
+import type { BreadcrumbItem, PageProps } from '@/types';
+import type { Role } from '@/types/role';
+import type { User } from '@/types/user';
 import { UserForm } from './partials/form';
 
 export default function UserEdit({
@@ -14,7 +14,6 @@ export default function UserEdit({
     user: User;
     roles: Role[];
 }>) {
-
     return (
         <>
             <Head title={breadcrumbs[0].title} />
@@ -23,7 +22,12 @@ export default function UserEdit({
                 <div className="mx-auto space-y-6">
                     <Heading title="User" description="Update a user" />
 
-                    <UserForm mode="edit" user={user} roles={roles} className="max-w-xl" />
+                    <UserForm
+                        mode="edit"
+                        user={user}
+                        roles={roles}
+                        className="max-w-xl"
+                    />
                 </div>
             </div>
         </>

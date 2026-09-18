@@ -18,26 +18,23 @@ Route::middleware('sso')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // permissions
-    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index')
-        ->middleware('permission:permissions.index');
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
 
     // roles
-    Route::resource('/roles', RoleController::class)
-        ->middleware('permission:roles.index|roles.create|roles.edit|roles.delete');
+    Route::resource('/roles', RoleController::class);
 
     // users
-    Route::resource('/users', UserController::class)
-        ->middleware('permission:users.index|users.create|users.edit|users.delete');
-    Route::patch('/users/{id}/restore', [UserController::class, 'restore'])
+    Route::resource('/users', UserController::class);
+    Route::patch('/users/{user}/restore', [UserController::class, 'restore'])
         ->name('users.restore')
-        ->middleware('permission:users.delete');
+        ->withTrashed();
 
-    Route::delete('/users/{id}/force-delete', [UserController::class, 'forceDelete'])
+    Route::delete('/users/{user}/force-delete', [UserController::class, 'forceDelete'])
         ->name('users.force-delete')
-        ->middleware('permission:users.delete');
+        ->withTrashed();
 });
 
 require __DIR__.'/settings.php';

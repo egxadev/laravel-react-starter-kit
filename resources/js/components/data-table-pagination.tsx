@@ -7,7 +7,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { PER_PAGE_OPTIONS } from '@/constants/pagination';
 
 interface PaginationMeta {
@@ -25,32 +31,41 @@ interface DataTablePaginationProps {
     onPerPageChange?: (perPage: number) => void;
 }
 
-export function DataTablePagination({ meta, onPageChange, onPerPageChange }: DataTablePaginationProps) {
+export function DataTablePagination({
+    meta,
+    onPageChange,
+    onPerPageChange,
+}: DataTablePaginationProps) {
     return (
         <div className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
             {onPerPageChange && (
-                <div className="flex items-center gap-2 text-sm justify-center">
+                <div className="flex items-center justify-center gap-2 text-sm">
                     <span className="text-muted-foreground">Show:</span>
                     <Select
                         value={meta.per_page.toString()}
-                        onValueChange={(value) => onPerPageChange(parseInt(value))}
+                        onValueChange={(value) =>
+                            onPerPageChange(parseInt(value))
+                        }
                     >
                         <SelectTrigger className="w-20">
                             <SelectValue />
                         </SelectTrigger>
-                            <SelectContent>
-                                {PER_PAGE_OPTIONS.map((option) => (
-                                    <SelectItem key={option} value={option.toString()}>
-                                        {option}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
+                        <SelectContent>
+                            {PER_PAGE_OPTIONS.map((option) => (
+                                <SelectItem
+                                    key={option}
+                                    value={option.toString()}
+                                >
+                                    {option}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
                     </Select>
                     <span className="text-muted-foreground">entries</span>
                 </div>
             )}
             <div className="text-center">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                     Showing {meta.from} to {meta.to} of {meta.total} entries.
                 </div>
             </div>
@@ -66,41 +81,79 @@ export function DataTablePagination({ meta, onPageChange, onPerPageChange }: Dat
                                         onPageChange(meta.current_page - 1);
                                     }
                                 }}
-                                className={meta.current_page > 1 ? '' : 'cursor-default opacity-50'}
+                                className={
+                                    meta.current_page > 1
+                                        ? ''
+                                        : 'cursor-default opacity-50'
+                                }
                             />
                         </PaginationItem>
                         {meta.last_page > 5 ? (
                             <>
                                 <PaginationItem>
-                                    <PaginationLink href="#" isActive={meta.current_page === 1} onClick={() => onPageChange(1)}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={meta.current_page === 1}
+                                        onClick={() => onPageChange(1)}
+                                    >
                                         1
                                     </PaginationLink>
                                 </PaginationItem>
-                                {meta.current_page > 3 && <PaginationEllipsis />}
-                                {[meta.current_page - 1, meta.current_page, meta.current_page + 1]
-                                    .filter((page) => page > 1 && page < meta.last_page)
+                                {meta.current_page > 3 && (
+                                    <PaginationEllipsis />
+                                )}
+                                {[
+                                    meta.current_page - 1,
+                                    meta.current_page,
+                                    meta.current_page + 1,
+                                ]
+                                    .filter(
+                                        (page) =>
+                                            page > 1 && page < meta.last_page,
+                                    )
                                     .map((page) => (
                                         <PaginationItem key={page}>
-                                            <PaginationLink href="#" isActive={meta.current_page === page} onClick={() => onPageChange(page)}>
+                                            <PaginationLink
+                                                href="#"
+                                                isActive={
+                                                    meta.current_page === page
+                                                }
+                                                onClick={() =>
+                                                    onPageChange(page)
+                                                }
+                                            >
                                                 {page}
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))}
-                                {meta.current_page < meta.last_page - 2 && <PaginationEllipsis />}
+                                {meta.current_page < meta.last_page - 2 && (
+                                    <PaginationEllipsis />
+                                )}
                                 <PaginationItem>
                                     <PaginationLink
                                         href="#"
-                                        isActive={meta.current_page === meta.last_page}
-                                        onClick={() => onPageChange(meta.last_page)}
+                                        isActive={
+                                            meta.current_page === meta.last_page
+                                        }
+                                        onClick={() =>
+                                            onPageChange(meta.last_page)
+                                        }
                                     >
                                         {meta.last_page}
                                     </PaginationLink>
                                 </PaginationItem>
                             </>
                         ) : (
-                            Array.from({ length: meta.last_page }, (_, i) => i + 1).map((page) => (
+                            Array.from(
+                                { length: meta.last_page },
+                                (_, i) => i + 1,
+                            ).map((page) => (
                                 <PaginationItem key={page}>
-                                    <PaginationLink href="#" isActive={meta.current_page === page} onClick={() => onPageChange(page)}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={meta.current_page === page}
+                                        onClick={() => onPageChange(page)}
+                                    >
                                         {page}
                                     </PaginationLink>
                                 </PaginationItem>
@@ -114,7 +167,11 @@ export function DataTablePagination({ meta, onPageChange, onPerPageChange }: Dat
                                         onPageChange(meta.current_page + 1);
                                     }
                                 }}
-                                className={meta.current_page < meta.last_page ? '' : 'cursor-default opacity-50'}
+                                className={
+                                    meta.current_page < meta.last_page
+                                        ? ''
+                                        : 'cursor-default opacity-50'
+                                }
                             />
                         </PaginationItem>
                     </PaginationContent>

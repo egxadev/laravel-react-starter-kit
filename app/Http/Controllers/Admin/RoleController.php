@@ -4,26 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
-use App\Services\RoleService;
+use App\Models\Permission;
+use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    protected $roleService;
+    use AuthorizesRequests;
 
-    public function __construct(RoleService $roleService)
-    {
-        $this->roleService = $roleService;
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Role::class);
+
         $breadcrumbs = [
             [
                 'title' => 'Role',
@@ -31,7 +25,7 @@ class RoleController extends Controller
             ],
         ];
 
-        $data = $this->roleService->getPaginatedRoles($request->all());
+        $data = Role::filterPaginate($request->all());
 
         return inertia('roles/index', array_merge(
             ['breadcrumbs' => $breadcrumbs],
@@ -39,11 +33,10 @@ class RoleController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        $this->authorize('create', Role::class);
+
         $breadcrumbs = [
             [
                 'title' => 'Role',
@@ -61,24 +54,21 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(RoleRequest $request)
     {
-        $response = $this->roleService->createRole($request->all());
+        $this->authorize('create', Role::class);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        Role::createWithPermissions($request->validated(), $request->validated('permissions'));
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Role created successfully.']);
 
         return redirect()->route('roles.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
+        $this->authorize('update', $role);
+
         $breadcrumbs = [
             [
                 'title' => 'Role',
@@ -86,39 +76,35 @@ class RoleController extends Controller
             ],
             [
                 'title' => 'Edit',
-                'href' => route('roles.edit', $id),
+                'href' => route('roles.edit', $role),
             ],
         ];
 
         return inertia('roles/edit', [
             'breadcrumbs' => $breadcrumbs,
-            'role' => Role::with('permissions')->findOrFail($id),
+            'role' => $role->load('permissions'),
             'permissions' => Permission::all(),
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(RoleRequest $request, Role $role)
     {
-        $response = $this->roleService->updateRole($role, $request->all());
+        $this->authorize('update', $role);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        $role->updateWithPermissions($request->validated(), $request->validated('permissions'));
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Role updated successfully.']);
 
         return redirect()->route('roles.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        $response = $this->roleService->deleteRole($id);
+        $this->authorize('delete', $role);
 
-        $type = $response['success'] ? 'success' : 'error';
-        Inertia::flash('toast', ['type' => $type, 'message' => $response['message']]);
+        $role->delete();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Role deleted successfully.']);
 
         return redirect()->route('roles.index');
     }

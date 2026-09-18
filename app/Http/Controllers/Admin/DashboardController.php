@@ -11,7 +11,7 @@ class DashboardController extends Controller
         $breadcrumbs = [
             [
                 'title' => 'Dashboard',
-                'href' => route('dashboard.index'),
+                'href' => route('dashboard'),
             ],
         ];
 

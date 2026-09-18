@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import Heading from '@/components/heading';
-import type {BreadcrumbItem, PageProps} from '@/types';
-import type {Role} from '@/types/role';
+import type { BreadcrumbItem, PageProps } from '@/types';
+import type { Role } from '@/types/role';
 import { UserForm } from './partials/form';
 
 export default function UserCreate({
@@ -19,7 +19,11 @@ export default function UserCreate({
                 <div className="mx-auto space-y-6">
                     <Heading title="User" description="Create a new user" />
 
-                    <UserForm mode="create" roles={roles} className="max-w-xl" />
+                    <UserForm
+                        mode="create"
+                        roles={roles}
+                        className="max-w-xl"
+                    />
                 </div>
             </div>
         </>

@@ -1,118 +1,98 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { router, usePage } from '@inertiajs/react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type {PageProps} from '@/types';
-import type {Permission} from '@/types/permission';
-import type {Role} from '@/types/role';
+import { Label } from '@/components/ui/label';
+import { store as storeRoles, update as updateRoles } from '@/routes/roles';
+import type { Permission } from '@/types/permission';
+import type { Role } from '@/types/role';
 
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: 'Role name must be at least 2 characters.',
-    }),
-    permissions: z.array(z.number()),
-});
+interface RoleFormProps {
+    mode: 'create' | 'edit';
+    permissions: Permission[];
+    role?: Role;
+    className?: string;
+}
 
 export function RoleForm({
     mode,
     permissions,
     role,
     className,
-}: PageProps<{
-    mode: 'create' | 'edit';
-    permissions: Permission[];
-    role?: Role;
-    className: string;
-}>) {
-    const { errors } = usePage().props;
-
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: role?.name,
-            permissions: (role?.permissions ?? []).map((permission) => permission.id),
-        },
+}: RoleFormProps) {
+    const { data, setData, post, put, errors, processing } = useForm({
+        name: role?.name ?? '',
+        permissions: (role?.permissions ?? []).map((p) => p.id) as number[],
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const isCreateMode = mode === 'create';
-        const url = isCreateMode ? '/roles' : `/roles/${role?.id}`;
-
-        if (isCreateMode) {
-            router.post(url, values, {
-                onSuccess: () => {
-                    console.log('Role created successfully.');
-                },
-                onError: () => {
-                    console.error('Failed to create role.');
-                },
-            });
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (mode === 'create') {
+            post(storeRoles().url);
         } else {
-            router.put(url, values, {
-                onSuccess: () => {
-                    console.log('Role updated successfully.');
-                },
-                onError: () => {
-                    console.error('Failed to update role.');
-                },
-            });
+            put(updateRoles({ role: role!.id }).url);
         }
     }
 
+    function togglePermission(id: number, checked: boolean) {
+        setData(
+            'permissions',
+            checked
+                ? [...data.permissions, id]
+                : data.permissions.filter((p) => p !== id),
+        );
+    }
+
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={`${className} space-y-8`}>
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Role Name</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage>{errors.name}</FormMessage>
-                        </FormItem>
-                    )}
+        <form
+            onSubmit={handleSubmit}
+            className={`${className ?? ''} space-y-6`}
+        >
+            <div className="space-y-2">
+                <Label htmlFor="name">Role Name</Label>
+                <Input
+                    id="name"
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
                 />
+                {errors.name && (
+                    <p className="text-sm text-red-500">{errors.name}</p>
+                )}
+            </div>
 
-                <FormField
-                    control={form.control}
-                    name="permissions"
-                    render={({ field }) => (
-                        <FormItem>
-                            <div className="mb-4">
-                                <FormLabel className="text-base">Permission</FormLabel>
-                                <FormDescription>Select permissions for this role.</FormDescription>
-                            </div>
-                            {permissions.map((permission) => (
-                                <FormItem key={permission.id} className="flex flex-row items-start space-y-0 space-x-3">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value?.includes(permission.id)}
-                                            onCheckedChange={(checked) => {
-                                                field.onChange(
-                                                    checked
-                                                        ? [...field.value, permission.id]
-                                                        : field.value?.filter((value) => value !== permission.id),
-                                                );
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal">{permission.name}</FormLabel>
-                                </FormItem>
-                            ))}
-                            <FormMessage>{errors.permissions}</FormMessage>
-                        </FormItem>
-                    )}
-                />
+            <div className="space-y-3">
+                <Label className="text-base">Permission</Label>
+                <p className="text-muted-foreground text-sm">
+                    Select permissions for this role.
+                </p>
+                {permissions.map((permission) => (
+                    <div
+                        key={permission.id}
+                        className="flex items-center space-x-3"
+                    >
+                        <Checkbox
+                            id={`permission-${permission.id}`}
+                            checked={data.permissions.includes(permission.id)}
+                            onCheckedChange={(checked) =>
+                                togglePermission(permission.id, !!checked)
+                            }
+                        />
+                        <Label
+                            htmlFor={`permission-${permission.id}`}
+                            className="text-sm font-normal"
+                        >
+                            {permission.name}
+                        </Label>
+                    </div>
+                ))}
+                {errors.permissions && (
+                    <p className="text-sm text-red-500">{errors.permissions}</p>
+                )}
+            </div>
 
-                <Button type="submit">Submit</Button>
-            </form>
-        </Form>
+            <Button type="submit" disabled={processing}>
+                Submit
+            </Button>
+        </form>
     );
 }
