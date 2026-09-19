@@ -22,7 +22,7 @@ use Ramsey\Uuid\Uuid;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
