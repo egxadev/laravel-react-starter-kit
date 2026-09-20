@@ -8,23 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 trait Filterable
 {
     /**
-     * @return array<int, string>
-     */
-    protected function getSearchableColumns(): array
-    {
-        return isset($this->searchable) && is_array($this->searchable)
-            ? $this->searchable
-            : ['name', 'created_at'];
-    }
-
-    /**
      * @param  array<string, mixed>  $filters
      * @param  array<int, string>  $searchable
      * @return array{columns: array<int, string>, sort_by: string, sort_dir: string, search: string, per_page: int, page: int, has_soft_deletes: bool, trashed: bool}
      */
     private function parseFilters(array $filters, array $searchable = []): array
     {
-        $columns = ! empty($searchable) ? $searchable : $this->getSearchableColumns();
+        $columns = $searchable ?: ($this->searchable ?? []);
         $defaultSortBy = $columns[0] ?? 'created_at';
         $hasSoftDeletes = in_array(SoftDeletes::class, class_uses_recursive(static::class), true);
 
@@ -50,9 +40,19 @@ trait Filterable
      */
     public function scopeFilter(Builder $query, array $filters = [], array $searchable = []): Builder
     {
-        $parsed = $this->parseFilters($filters, $searchable);
+        return $this->applyFilters($query, $this->parseFilters($filters, $searchable));
+    }
 
-        if ($parsed['trashed'] && method_exists($query, 'onlyTrashed')) {
+    /**
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  Builder<TModel>  $query
+     * @param  array{columns: array<int, string>, sort_by: string, sort_dir: string, search: string, per_page: int, page: int, has_soft_deletes: bool, trashed: bool}  $parsed
+     * @return Builder<TModel>
+     */
+    private function applyFilters(Builder $query, array $parsed): Builder
+    {
+        if ($parsed['has_soft_deletes'] && $parsed['trashed']) {
             $query->onlyTrashed();
         }
 
@@ -78,9 +78,8 @@ trait Filterable
     public function scopeFilterPaginate(Builder $query, array $filters = [], array $searchable = []): array
     {
         $parsed = $this->parseFilters($filters, $searchable);
-
-        $query = $this->scopeFilter($query, $filters, $searchable);
-        $paginator = $query->paginate($parsed['per_page'], ['*'], 'page', $parsed['page']);
+        $paginator = $this->applyFilters($query, $parsed)
+            ->paginate($parsed['per_page'], ['*'], 'page', $parsed['page']);
 
         $filterPayload = [
             'search' => $parsed['search'],

@@ -9,29 +9,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { index as indexUsers, create as createUsers } from '@/routes/users';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, Listing } from '@/types';
 import type { User } from '@/types/user';
 import { columns } from './partials/data-table';
 
 export default function UserIndex() {
-    const { breadcrumbs, data, meta, filters } = usePage<{
-        breadcrumbs: BreadcrumbItem[];
-        data: User[];
-        meta: {
-            current_page: number;
-            last_page: number;
-            per_page: number;
-            total: number;
-            from: number;
-            to: number;
-        };
-        filters: {
-            search: string;
-            sort_by: string;
-            sort_dir: string;
-            trashed: boolean;
-        };
-    }>().props;
+    const { breadcrumbs, data, meta, filters } = usePage<
+        { breadcrumbs: BreadcrumbItem[] } & Listing<User>
+    >().props;
 
     function setTrashed(value: boolean) {
         router.get(

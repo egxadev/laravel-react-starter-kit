@@ -15,15 +15,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { PER_PAGE_OPTIONS } from '@/constants/pagination';
-
-interface PaginationMeta {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from: number;
-    to: number;
-}
+import type { PaginationMeta } from '@/types';
 
 interface DataTablePaginationProps {
     meta: PaginationMeta;

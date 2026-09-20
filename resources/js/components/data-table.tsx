@@ -4,9 +4,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
 import type { SortingState, VisibilityState } from '@tanstack/react-table';
@@ -29,21 +26,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-
-interface PaginationMeta {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from: number;
-    to: number;
-}
+import type { ListingFilters, PaginationMeta } from '@/types';
 
 interface DataTableProps<TData> {
     columns: ColumnDef<TData>[];
     data: TData[];
     meta: PaginationMeta;
-    filters: Record<string, unknown>;
+    filters: ListingFilters;
     routeUrl: RouteDefinition<'get'> | string;
     extraFilters?: React.ReactNode;
     createHref?: RouteDefinition<'get'> | string;
@@ -64,12 +53,10 @@ export function DataTable<TData>({
 }: DataTableProps<TData>) {
     const toUrl = (href: RouteDefinition<'get'> | string): string =>
         typeof href === 'string' ? href : href.url;
-    const [search, setSearch] = React.useState(
-        (filters.search as string) ?? '',
-    );
+    const [search, setSearch] = React.useState(filters.search ?? '');
     const [sorting, setSorting] = React.useState<SortingState>([
         {
-            id: (filters.sort_by as string) ?? 'created_at',
+            id: filters.sort_by ?? 'created_at',
             desc: filters.sort_dir === 'desc',
         },
     ]);
@@ -136,9 +123,6 @@ export function DataTable<TData>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
         meta: tableMeta,
         state: {
             sorting,

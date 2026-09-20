@@ -180,4 +180,63 @@ class UserManagementTest extends TestCase
         $forceDeleteResponse->assertRedirect(route('users.index'));
         $this->assertDatabaseMissing('users', ['id' => $targetUser->id]);
     }
+
+    public function test_users_list_can_be_searched(): void
+    {
+        User::factory()->create(['name' => 'Findable Person', 'email' => 'findable@example.com']);
+        User::factory()->create(['name' => 'Hidden Person', 'email' => 'hidden@example.com']);
+
+        $response = $this->actingAs($this->admin)->get(route('users.index', ['search' => 'Findable']));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('users/index')
+            ->has('data', 1)
+            ->where('data.0.name', 'Findable Person')
+            ->where('filters.search', 'Findable')
+        );
+    }
+
+    public function test_users_list_can_be_sorted_and_paginated(): void
+    {
+        $this->admin->update(['name' => 'Zulu Admin']);
+        User::factory()->create(['name' => 'Alpha']);
+        User::factory()->create(['name' => 'Bravo']);
+        User::factory()->create(['name' => 'Charlie']);
+        User::factory()->create(['name' => 'Delta']);
+        User::factory()->create(['name' => 'Echo']);
+
+        $response = $this->actingAs($this->admin)->get(route('users.index', [
+            'sort_by' => 'name',
+            'sort_dir' => 'desc',
+            'per_page' => 2,
+            'page' => 1,
+        ]));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->where('meta.per_page', 2)
+            ->where('meta.total', 6)
+            ->has('data', 2)
+            ->where('data.0.name', 'Zulu Admin')
+            ->where('data.1.name', 'Echo')
+            ->where('filters.sort_by', 'name')
+            ->where('filters.sort_dir', 'desc')
+        );
+    }
+
+    public function test_users_list_can_be_filtered_to_trashed(): void
+    {
+        User::factory()->create(['name' => 'Active Person']);
+        User::factory()->create(['name' => 'Gone Person'])->delete();
+
+        $response = $this->actingAs($this->admin)->get(route('users.index', ['trashed' => true]));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->has('data', 1)
+            ->where('data.0.name', 'Gone Person')
+            ->where('filters.trashed', true)
+        );
+    }
 }
