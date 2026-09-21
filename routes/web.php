@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -18,7 +17,7 @@ Route::middleware('sso')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::inertia('/dashboard', 'dashboard/index')->name('dashboard');
 
     // permissions
     Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');

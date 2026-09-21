@@ -6,6 +6,7 @@ import {
     usePatchAction,
 } from '@/components/data-table-row-actions';
 import { Button } from '@/components/ui/button';
+import { Permission } from '@/constants/permissions';
 import { useHasAnyPermission } from '@/lib/utils';
 import {
     destroy as destroyUsers,
@@ -76,11 +77,11 @@ const ActionCell = ({
         {
             label: 'Edit',
             href: editUsers({ user: data.id }).url,
-            permission: hasAnyPermission(['users.edit']),
+            permission: hasAnyPermission([Permission.UsersEdit]),
         },
         {
             label: 'Delete',
-            permission: hasAnyPermission(['users.delete']),
+            permission: hasAnyPermission([Permission.UsersDelete]),
             confirm: {
                 title: 'Are you absolutely sure?',
                 description:
@@ -93,7 +94,7 @@ const ActionCell = ({
     const trashedActions = [
         {
             label: 'Restore',
-            permission: hasAnyPermission(['users.delete']),
+            permission: hasAnyPermission([Permission.UsersDelete]),
             confirm: {
                 title: 'Restore User',
                 description:
@@ -105,7 +106,7 @@ const ActionCell = ({
         {
             label: 'Permanently Delete',
             variant: 'destructive' as const,
-            permission: hasAnyPermission(['users.delete']),
+            permission: hasAnyPermission([Permission.UsersDelete]),
             confirm: {
                 title: 'Permanently Delete User',
                 description:

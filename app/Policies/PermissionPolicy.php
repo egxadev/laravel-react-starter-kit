@@ -2,12 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-
-class PermissionPolicy
+class PermissionPolicy extends ResourcePolicy
 {
-    public function viewAny(User $user): bool
-    {
-        return $user->hasPermissionTo('permissions.index');
-    }
+    protected string $resource = 'permissions';
 }

@@ -18,26 +18,14 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $breadcrumbs = [
-            ['title' => 'User', 'href' => route('users.index')],
-        ];
-
-        $data = User::filterPaginate($request->all());
-
-        return inertia('users/index', array_merge(['breadcrumbs' => $breadcrumbs], $data));
+        return inertia('users/index', User::filterPaginate($request->all()));
     }
 
     public function create()
     {
         $this->authorize('create', User::class);
 
-        $breadcrumbs = [
-            ['title' => 'User', 'href' => route('users.index')],
-            ['title' => 'Create', 'href' => route('users.create')],
-        ];
-
         return inertia('users/create', [
-            'breadcrumbs' => $breadcrumbs,
             'roles' => Role::all(),
         ]);
     }
@@ -57,13 +45,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $breadcrumbs = [
-            ['title' => 'User', 'href' => route('users.index')],
-            ['title' => 'Edit', 'href' => route('users.edit', $user)],
-        ];
-
         return inertia('users/edit', [
-            'breadcrumbs' => $breadcrumbs,
             'roles' => Role::all(),
             'user' => $user->load('roles'),
         ]);

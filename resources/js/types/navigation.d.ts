@@ -1,5 +1,6 @@
 import type { InertiaLinkProps } from '@inertiajs/react';
 import type { LucideIcon } from 'lucide-react';
+import type { PermissionName } from '@/constants/permissions';
 
 export interface BreadcrumbItem {
     title: string;
@@ -16,6 +17,6 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
-    permission?: string[];
+    permission?: PermissionName[];
     items?: NavItem[];
 }

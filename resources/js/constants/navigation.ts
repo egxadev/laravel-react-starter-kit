@@ -7,6 +7,7 @@ import {
     UserRoundCog,
     UsersRound,
 } from 'lucide-react';
+import { Permission } from '@/constants/permissions';
 import { dashboard } from '@/routes';
 import { edit as editAppearance } from '@/routes/appearance';
 // import { edit as editPassword } from '@/routes/user-password';
@@ -22,31 +23,31 @@ export const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
-        permission: ['dashboard.index'],
+        permission: [Permission.DashboardIndex],
     },
     {
         title: 'Permission',
         href: indexPermissions(),
         icon: KeyRound,
-        permission: ['permissions.index'],
+        permission: [Permission.PermissionsIndex],
     },
     {
         title: 'Role',
         href: indexRoles(),
         icon: UserRoundCog,
-        permission: ['roles.index'],
+        permission: [Permission.RolesIndex],
     },
     {
         title: 'User',
         href: indexUsers(),
         icon: UsersRound,
-        permission: ['users.index'],
+        permission: [Permission.UsersIndex],
     },
     {
         title: 'Resources',
         href: '#',
         icon: Rocket,
-        permission: ['users.index'],
+        permission: [Permission.UsersIndex],
         items: [
             {
                 title: 'Repository',

@@ -18,18 +18,6 @@ class PermissionController extends Controller
     {
         $this->authorize('viewAny', Permission::class);
 
-        $breadcrumbs = [
-            [
-                'title' => 'Permission',
-                'href' => route('permissions.index'),
-            ],
-        ];
-
-        $data = Permission::filterPaginate($request->all());
-
-        return inertia('permissions/index', array_merge(
-            ['breadcrumbs' => $breadcrumbs],
-            $data
-        ));
+        return inertia('permissions/index', Permission::filterPaginate($request->all()));
     }
 }

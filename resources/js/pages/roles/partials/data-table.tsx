@@ -5,6 +5,7 @@ import {
     useDeleteAction,
 } from '@/components/data-table-row-actions';
 import { Button } from '@/components/ui/button';
+import { Permission } from '@/constants/permissions';
 import { useHasAnyPermission } from '@/lib/utils';
 import { destroy as destroyRoles, edit as editRoles } from '@/routes/roles';
 import type { Role } from '@/types/role';
@@ -43,11 +44,11 @@ const ActionCell = ({ data }: { data: Role }) => {
                 {
                     label: 'Edit',
                     href: editRoles({ role: data.id }).url,
-                    permission: hasAnyPermission(['roles.edit']),
+                    permission: hasAnyPermission([Permission.RolesEdit]),
                 },
                 {
                     label: 'Delete',
-                    permission: hasAnyPermission(['roles.delete']),
+                    permission: hasAnyPermission([Permission.RolesDelete]),
                     confirm: {
                         title: 'Are you absolutely sure?',
                         description:

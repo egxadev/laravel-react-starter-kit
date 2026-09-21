@@ -18,38 +18,14 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
 
-        $breadcrumbs = [
-            [
-                'title' => 'Role',
-                'href' => route('roles.index'),
-            ],
-        ];
-
-        $data = Role::filterPaginate($request->all());
-
-        return inertia('roles/index', array_merge(
-            ['breadcrumbs' => $breadcrumbs],
-            $data
-        ));
+        return inertia('roles/index', Role::filterPaginate($request->all()));
     }
 
     public function create()
     {
         $this->authorize('create', Role::class);
 
-        $breadcrumbs = [
-            [
-                'title' => 'Role',
-                'href' => route('roles.index'),
-            ],
-            [
-                'title' => 'Create',
-                'href' => route('roles.create'),
-            ],
-        ];
-
         return inertia('roles/create', [
-            'breadcrumbs' => $breadcrumbs,
             'permissions' => Permission::all(),
         ]);
     }
@@ -69,19 +45,7 @@ class RoleController extends Controller
     {
         $this->authorize('update', $role);
 
-        $breadcrumbs = [
-            [
-                'title' => 'Role',
-                'href' => route('roles.index'),
-            ],
-            [
-                'title' => 'Edit',
-                'href' => route('roles.edit', $role),
-            ],
-        ];
-
         return inertia('roles/edit', [
-            'breadcrumbs' => $breadcrumbs,
             'role' => $role->load('permissions'),
             'permissions' => Permission::all(),
         ]);

@@ -3,46 +3,29 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Database\Eloquent\Model;
 
-class UserPolicy
+class UserPolicy extends ResourcePolicy
 {
-    use HandlesAuthorization;
+    protected string $resource = 'users';
 
-    public function viewAny(User $actor): bool
+    public function delete(User $actor, Model $target): bool
     {
-        return $actor->hasPermissionTo('users.index');
+        return parent::delete($actor, $target) && $this->isNotSelf($actor, $target);
     }
 
-    public function create(User $actor): bool
+    public function restore(User $actor, Model $target): bool
     {
-        return $actor->hasPermissionTo('users.create');
+        return $this->allows($actor, 'delete');
     }
 
-    public function view(User $actor, User $target): bool
+    public function forceDelete(User $actor, Model $target): bool
     {
-        return $actor->hasPermissionTo('users.index');
+        return parent::delete($actor, $target) && $this->isNotSelf($actor, $target);
     }
 
-    public function update(User $actor, User $target): bool
+    private function isNotSelf(User $actor, Model $target): bool
     {
-        return $actor->hasPermissionTo('users.edit');
-    }
-
-    public function delete(User $actor, User $target): bool
-    {
-        return $actor->hasPermissionTo('users.delete')
-            && (string) $actor->id !== (string) $target->id;
-    }
-
-    public function restore(User $actor, User $target): bool
-    {
-        return $actor->hasPermissionTo('users.delete');
-    }
-
-    public function forceDelete(User $actor, User $target): bool
-    {
-        return $actor->hasPermissionTo('users.delete')
-            && (string) $actor->id !== (string) $target->id;
+        return (string) $actor->id !== (string) $target->id;
     }
 }

@@ -3,6 +3,7 @@ import type { InertiaLinkProps } from '@inertiajs/react';
 import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { PermissionName } from '@/constants/permissions';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -17,7 +18,7 @@ type AuthProps = {
 export function useHasAnyPermission() {
     const { auth } = usePage<AuthProps>().props;
 
-    return (permissions: string[]): boolean => {
+    return (permissions: PermissionName[]): boolean => {
         return permissions.some((permission) =>
             Boolean(auth?.permissions?.[permission]),
         );
