@@ -26,6 +26,6 @@ class UserPolicy extends ResourcePolicy
 
     private function isNotSelf(User $actor, Model $target): bool
     {
-        return (string) $actor->id !== (string) $target->id;
+        return $actor->isNot($target);
     }
 }
